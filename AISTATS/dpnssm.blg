@@ -5,42 +5,42 @@ The style file: apalike.bst
 Database file #1: aistats.bib
 You've used 21 entries,
             1935 wiz_defined-function locations,
-            611 strings with 7630 characters,
-and the built_in function-call counts, 8773 in all, are:
-= -- 867
-> -- 357
+            611 strings with 7651 characters,
+and the built_in function-call counts, 8660 in all, are:
+= -- 854
+> -- 352
 < -- 16
-+ -- 130
-- -- 120
++ -- 128
+- -- 118
 * -- 741
-:= -- 1508
+:= -- 1496
 add.period$ -- 65
 call.type$ -- 21
 change.case$ -- 161
 chr.to.int$ -- 21
 cite$ -- 21
-duplicate$ -- 332
-empty$ -- 610
+duplicate$ -- 323
+empty$ -- 605
 format.name$ -- 151
-if$ -- 1724
+if$ -- 1692
 int.to.chr$ -- 1
 int.to.str$ -- 0
 missing$ -- 22
 newline$ -- 108
 num.names$ -- 63
-pop$ -- 141
+pop$ -- 138
 preamble$ -- 1
 purify$ -- 163
 quote$ -- 0
-skip$ -- 262
+skip$ -- 250
 stack$ -- 0
-substring$ -- 638
-swap$ -- 53
-text.length$ -- 5
+substring$ -- 631
+swap$ -- 44
+text.length$ -- 4
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 122
 warning$ -- 0
-while$ -- 74
+while$ -- 73
 width$ -- 0
 write$ -- 275

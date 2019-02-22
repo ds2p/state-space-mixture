@@ -29,7 +29,6 @@
 \usepackage{math-common}
 
 
-
 % If you use BibTeX in apalike style, activate the following line:
 \bibliographystyle{apalike}
 
@@ -53,16 +52,17 @@
 
 \aistatstitle{Clustering Time Series with Nonlinear Dynamics: A Bayesian Non-Parametric and Particle-Based Approach}
 
-\aistatsauthor{ Alexander Lin$^1$ \And Yingzhuo Zhang$^1$ \And Jeremy Heng$^1$ \And Stephen A. Allsop$^2$}
-\aistatsauthor{ Kay M. Tye$^3$ \And Pierre E. Jacob$^1$ \And Demba Ba$^1$ }
- 
-\aistatsaddress{ $^1$Harvard University \And $^2$MIT, Picower Institute \And $^3$Salk Institute} 
+\aistatsauthor{ Alexander Lin$^*$ \And Yingzhuo Zhang$^*$ \And Jeremy Heng$^*$ \And Stephen A. Allsop$^\dag$}
+\vspace{-0.1em}
+\aistatsauthor{ Kay M. Tye$^\ddag$ \And Pierre E. Jacob$^*$ \And Demba Ba$^*$ }
+ \vspace{-0.1em}
+\aistatsaddress{ $^*$Harvard University \And $^\dag$MIT, Picower Institute \And $^\ddag$Salk Institute} 
 ]
 
 
 
 \begin{abstract}
-We propose a general statistical framework for clustering multiple time series that exhibit nonlinear dynamics into an a-priori-unknown number of sub-groups. Our motivation comes from neuroscience, where an important problem is to identify, within a large assembly of neurons, subsets that respond similarly to a stimulus or contingency.  Upon modeling the multiple time series as the output of a Dirichlet process mixture of nonlinear state-space models, we derive a Metropolis-within-Gibbs algorithm for full Bayesian inference that alternates between sampling cluster assignments and sampling parameter values that form the basis of the clustering. The Metropolis step is a PMMH iteration that requires an unbiased, low variance estimate of the likelihood function of a nonlinear state-space model, which we compute using the recently developed cSMC algorithm.  We apply the framework to clustering time series acquired from the prefrontal cortex of mice in an experiment designed to characterize the neural underpinnings of fear.
+We propose a general statistical framework for clustering multiple time series that exhibit nonlinear dynamics into an a-priori-unknown number of sub-groups. Our motivation comes from neuroscience, where an important problem is to identify, within a large assembly of neurons, subsets that respond similarly to a stimulus or contingency.  Upon modeling the multiple time series as the output of a Dirichlet process mixture of nonlinear state-space models, we derive a Metropolis-within-Gibbs algorithm for full Bayesian inference that alternates between sampling cluster assignments and sampling parameter values that form the basis of the clustering. The Metropolis step employs recent innovations in particle-based methods.  We apply the framework to clustering time series acquired from the prefrontal cortex of mice in an experiment designed to characterize the neural underpinnings of fear.
 \end{abstract}
 
 \section{INTRODUCTION}
@@ -80,12 +80,10 @@ Previous model-based approaches for clustering multiple time series typically em
 
 %Linear Gaussian state-space models (LGSSMs) are a flexible model for time-series data~\cite{}. 
 
-State-space models are a well-known, flexible class of models for time series data \citep{durbin2012time}.  Many existing model-based approaches for clustering multiple time series use a mixture of linear Gaussian state-space models. 
+State-space models are a well-known, flexible class of models for time series data \citep{durbin2012time}.  Many existing model-based approaches for clustering time series use a mixture of linear Gaussian state-space models. 
 %and can be further classified according to whether the number of mixture components is assumed to be known a priori, and according to the choice of inference procedure (MCMC or variational Bayes)%\citep{inoue2006cluster,chiappa2007output,nieto2014bayesian,middleton2014,saad2018temporally}.
-~\cite{inoue2006cluster} and~\cite{chiappa2007output} both consider the case of finite mixtures and use Gibbs sampling and variational-Bayes respectively for posterior inference.~\cite{nieto2014bayesian} and~\cite{middleton2014} use a Dirichlet Process (DP) mixture to infer the number of clusters, and Gibbs sampling for full posterior inference.
-In all cases, the linear-Gaussian assumption is crucial; %, both from the statistical and computational perspectives: given a cluster assignment and parameters, 
-it enables exact evaluation of the likelihood using a Kalman filter and the ability to sample exactly from the state sequences underlying each of the time series. % using, for instance, a forward-filtering backward-sampling algorithm~\cite{}. 
-For nonlinear and non-Gaussian state-space models, this likelihood cannot be evaluated in closed form and exact sampling is not possible. 
+~\cite{inoue2006cluster} and~\cite{chiappa2007output} both consider the case of finite mixtures and use Gibbs sampling and variational-Bayes respectively for posterior inference.~\cite{nieto2014bayesian} and~\cite{middleton2014} use a Dirichlet process mixture to infer the number of clusters and Gibbs sampling for full posterior inference.
+In all cases, the linear-Gaussian assumption is crucial; it enables exact evaluation of the likelihood using a Kalman filter and the ability to sample exactly from the state sequences underlying each of the time series. For nonlinear and non-Gaussian state-space models, this likelihood cannot be evaluated in closed form and exact sampling is not possible. 
 
 We introduce a framework for clustering multiple time series that exhibit nonlinear dynamics into an a-priori-unknown number of clusters, each modeled as a nonlinear state-space model.  We derive a Metropolis-within-Gibbs algorithm for inference in a Dirichlet process mixture of state-space models with linear-Gaussian states and binomial observations, a popular model in the analysis of neural spiking activity~\citep{smith2003estimating}. The Metropolis step uses particle marginal Metropolis Hastings~\citep{andrieu2010particle}, which requires likelihood estimates with small variance. We use controlled sequential Monte Carlo~\citep{heng2017controlled} to produce such estimates. We apply the framework to the clustering of 33 neural spiking time series acquired from the prefrontal cortex of mice in an experiment designed to characterize the neural underpinnings of fear. The framework produces a clustering of the neurons into groups that represent {various degrees of neuronal signal modulation.}%various degrees of fear modulation.
 
@@ -93,23 +91,23 @@ We introduce a framework for clustering multiple time series that exhibit nonlin
 
 \section{NONLINEAR TIME SERIES CLUSTERING MODEL}
 
-We begin by introducing, under a general framework, the Dirichlet Process nonlinear State-Space Mixture (DPnSSM) model for clustering multiple time series exhibiting nonlinear dynamics.
+We begin by introducing the Dirichlet Process nonlinear State-Space Mixture (DPnSSM) model for clustering multiple time series exhibiting nonlinear dynamics.
 
 \subsection{DPnSSM} \label{sec:DPnSSM}
 
-Let $\bd Y = \{\bidx y 1, \ldots, \bidx y N\}$ be a set of observed time series in which each series $\bidx y n = \idx[1] y n, \ldots, \idx[T] y n$ is a vector of length $T$.  Following the general framework of state-space models, we model $\bidx y n$ as the output of a latent, autoregressive process $\bidx x n$.  In particular, for all $n = 1, \ldots, N$,
+Let $\bd Y = \{\bidx y 1, \ldots, \bidx y N\}$ be a set of observed time series in which each series $\bidx y n = \idx[1] y n, \ldots, \idx[T] y n$ is a vector of length $T$.  Following the framework of state-space models, we model $\bidx y n$ as the output of a latent, autoregressive process $\bidx x n$.  For all $n = 1, \ldots, N$,
 \begin{align}
 {\idx[1] x n} \given \idx {\bd{\tilde{\theta}}} n &\sim h(\idx[1] x n; \idx {\bd{\tilde{\theta}}} n), \\
 \idx[t] x n \given \idx[t-1] x n, \idx {\bd{\tilde{\theta}}} n &\sim f(\idx[t-1] x n, \idx[t] x n; \idx {\bd{\tilde{\theta}}} n), &   1 < t,  \nonumber \\ 
 \idx[t] y n \given \idx[t] x n, \idx {\bd{\tilde{\theta}}} n &\sim g(\idx[t] x n, \idx[t] y n; \idx {\bd{\tilde{\theta}}} n ),  &  1 \leq t, \nonumber
 \end{align}
-where $\idx {\bd{\tilde{\theta}}} n$ denotes a set of \emph{hidden parameters} for series $n$, $f$ is some \emph{state transition function}, $g$ is some \emph{state-dependent likelihood}, and {$h$ is some \emph{initial prior}}.  Although this paper only considers examples in which each $\idx[t] x n, \idx[t] y n \in \R$, our model and inference algorithm are extendable to cases in which observed time series and/or latent states have multiple dimensions. 
+where $\idx {\bd{\tilde{\theta}}} n$ denotes a set of \emph{parameters} for series $n$, $f$ is some \emph{state transition density}, $g$ is some \emph{state-dependent likelihood}, and {$h$ is some \emph{initial prior}}.  %Although this paper only considers examples in which each $\idx[t] x n, \idx[t] y n \in \R$, our model and inference algorithm are extendable to cases in which observed time series and/or latent states have multiple dimensions. 
 
-The hidden parameters ${\bd{\tilde{\Theta}}}  = \{\idx {\bd{\tilde{\theta}}}  1, \ldots, \idx {\bd{\tilde{\theta}}}  N\}$ form the basis of clustering $\bd Y$; that is, if $\bidx \ttheta n = \bidx \ttheta {n'}$, then series $n$ and $n'$ belong to the same cluster.  However, in many applications, the number of clusters itself may be an unknown variable and therefore, we choose to model the parameters as coming from a distribution $Q$ that is sampled from a Dirichlet process (DP) with base distribution $G$ and inverse-variance parameter $\alpha$.  \cite{ferguson1973bayesian} showed that $Q$ is almost surely discrete and that the number of distinct values within $N \to \infty$ draws from $Q$ is random.  Thus, the DP serves as a prior for discrete distributions over elements in the support of $G$.  The overall objective is to infer the joint distribution of ${\bd{\tilde{\Theta}}} \given \bd Y, \alpha, G$.
+The hidden parameters ${\bd{\tilde{\Theta}}}  = \{\idx {\bd{\tilde{\theta}}}  1, \ldots, \idx {\bd{\tilde{\theta}}}  N\}$ form the basis of clustering $\bd Y$; that is, if $\bidx \ttheta n = \bidx \ttheta {n'}$, then series $n$ and $n'$ belong to the same cluster.  However, in many applications, the number of clusters itself may be unknown and, therefore, we choose to model the parameters as coming from a distribution $Q$ that is sampled from a Dirichlet process (DP) with base distribution $G$ and inverse-variance parameter $\alpha$.  \cite{ferguson1973bayesian} showed that $Q$ is almost surely discrete and that the number of distinct values within $N \to \infty$ draws from $Q$ is random.  Thus, the DP serves as a prior for discrete distributions over elements in the support of $G$.  The overall objective is to infer the joint distribution of ${\bd{\tilde{\Theta}}} \given \bd Y, \alpha, G$.
 
 The Chinese Restaurant Process (CRP) representation of the DP integrates out the intermediary distribution $Q$ used to generate ${\bd{\tilde{\Theta}}}$ \citep{neal2000markov}.  The CRP allows us to nicely separate the process of assigning a cluster (i.e. table) to each $\bidx y n$ from the process of choosing a hidden parameter (i.e. table value) for each cluster.  This is similar to the finite mixture model, but we do not need to choose $K$, the number of clusters, a priori.
 
-Under the CRP, we index the parameters by the cluster index $k$ instead of by the observation index $n$.  Let $\idx z n \in \{1, \ldots, K\}$ denote the cluster identity of series $n$ and let $\idx {\bd{\theta}}  k$ denote the hidden parameters for cluster $k$. We formally define the model as follows,
+Under the CRP, we index the parameters by the cluster index $k$ instead of the observation index $n$.  Let $\idx z n \in \{1, \ldots, K\}$ denote the cluster identity of series $n$ and let $\idx {\bd{\theta}}  k$ denote the hidden parameters for cluster $k$. We formally define the model as follows,
 \begin{align} \label{crp}
 \idx z 1, \ldots, \idx z N, K \given \alpha &\sim \text{CRP}(\alpha, N), \\ 
 \idx {\bd{\theta}}  k \given G &\sim G, & \quad 1 \leq k \leq K, \nonumber 
@@ -118,11 +116,11 @@ and for all $n = 1,\ldots,N$,
 \begin{align}
 {\idx[1] x n} \given \idx z n = k, \idx {\bd{\theta}} k & \sim h(\idx[1] x n; \idx {\bd{\theta}} k), \nonumber \\ 
 \idx[t] x n \given \idx[t-1] x n, \idx z n = k, \idx {\bd{\theta}} k &\sim f(\idx[t-1] x n, \idx[t] x n; \idx {\bd{\theta}}  k), & 1 < t, \nonumber \\  
-\idx[t] y n \given \idx[t] x n, \idx z n = k, \idx {\bd{\theta}} k &\sim g(\idx[t] x n, \idx[t] y n; \idx {\bd{\theta}}  k), & 1 \leq t, \nonumber
+\idx[t] y n \given \idx[t] x n, \idx z n = k, \idx {\bd{\theta}} k &\sim g(\idx[t] x n, \idx[t] y n; \idx {\bd{\theta}}  k), & 1 \leq t. \nonumber
 \end{align}   
-Let $Z = \{z^{(1)},\ldots,z^{(N)}\}$, $\bd \Theta = \{\bd \theta^{(1)},\ldots,\bd \theta^{(K)}\}$.  Figure \ref{model-graph} shows a graphical representation of the DPnSSM.
+Let $Z = \{z^{(1)},\ldots,z^{(N)}\}$, $\bd \Theta = \{\bd \theta^{(1)},\ldots,\bd \theta^{(K)}\}$.  Figure \ref{model-graph} shows the graphical model for the DPnSSM.  Extensions of the model and inference algorithm to handling multi-dimensional time series and finite mixtures can be found in \textbf{Appendix \ref{model-extensions}}.
 
-For the case of finite mixtures with $K$ clusters, we can model $Z$ as instead being drawn from a $K$-dimensional multinomial that is itself drawn from a $K$-dimensional Dirichlet distribution with parameter $\bd \alpha = \{\idx \alpha 1, \ldots, \idx \alpha K\}$, where $\idx \alpha k > 0$ for all $k$.  
+%For the case of finite mixtures with $K$ clusters, we can model $Z$ as instead being drawn from a $K$-dimensional multinomial that is itself drawn from a $K$-dimensional Dirichlet distribution with parameter $\bd \alpha = \{\idx \alpha 1, \ldots, \idx \alpha K\}$, where $\idx \alpha k > 0$ for all $k$.  
 \begin{figure}[h]
 \begin{center}
 \includegraphics[scale=0.4]{img/graph.png}
@@ -139,24 +137,23 @@ Consider an experiment with $R$ successive trials, during which we record the ac
 where $dN_r^{(n)}(\tau)$ is the indicator function in $(0, \mathcal{T}]$ of {{$\{\tau^{(n)}_{r,s}\}_{s=1}^{S_r^{(n)}}$}}. A point-process is fully characterized by its conditional intensity function (CIF)~\citep{vere2003introduction}. Assuming all trials are i.i.d. realizations of the same point-process, the CIF $\lambda^{(n)}(\tau \given H_\tau)$ of $dN_r^{(n)}(\tau)$ for $r = 1, \ldots, R$ is
 \begin{align}
 	&\lambda^{(n)}(\tau \given H_\tau^{(n)})  \\ \nonumber
-	&=\lim_{\Delta \rightarrow 0} \frac{p\left(N_r^{(n)}(\tau+\Delta)-N_r^{(n)}(\tau)=1 \given H_\tau^{(n)}\right)}{\Delta},
+	&=\lim_{\delta \rightarrow 0} \frac{p\left(N_r^{(n)}(\tau+\delta)-N_r^{(n)}(\tau)=1 \given H_\tau^{(n)}\right)}{\delta},
 \end{align}
-where $H_\tau^{(n)}$ is the spiking history of the point process for neuron $n$ up to time $\tau$. The discrete-time process obtained by sampling $dN_r^{(n)}(\tau)$ at a resolution of $\Delta$, with $T = \left \lfloor \frac{\mathcal{T}}{\Delta} \right \rfloor$, is denoted by $\{\Delta N_{t,r}^{(n)}\}_{t=1,r=1}^{T,R}$.  Define $M = \max_{n, t, r} \Delta \idx[t, r] N n$. 
-Given $x_0^{(n)}$ and  $\idx[0] \psi n$, a popular approach is to encode a discrete-time representation of the CIF $\{\idx[t] \lambda n\}_{t=1}^T$ within an autoregressive process that underlies a binomial state-space model with observations {{$\{\Delta N_{t,r}^{(n)}\}_{t=1,r=1}^{T,R}$}} \citep{smith2003estimating}: 
+where $H_\tau^{(n)}$ is the event history of the point process up to time $\tau$ for neuron $n$.   Suppose we sample $dN_r^{(n)}(\tau)$ at a resolution of $\delta$ to yield a binary event sequence.  We denote by $\{\Delta N_{t,r}^{(n)}\}_{t=1,r=1}^{T,R}$ the discrete-time process obtained by counting the number of events in $T =  \left\lfloor \mathcal{T} / \Delta \right \rfloor$ disjoint bins of width $\Delta = M \cdot \delta$, where $M \in \mathbb{N}$.  Given $x_0^{(n)}$ and  $\idx[0] \psi n$, a popular approach is to encode a discrete-time representation of the CIF $\{\idx[t] \lambda n\}_{t=1}^T$ within an autoregressive process that underlies a binomial state-space model with observations {{$\{\Delta N_{t,r}^{(n)}\}_{t=1,r=1}^{T,R}$}} \citep{smith2003estimating}: 
 \begin{align}
 	 &x_1^{(n)} \given \idx \tmu n \sim \mathcal{N}(x_0^{(n)} + \idx \tmu n, \idx[0] \psi n), \label{bssm} \\ 
 	  &x_t^{(n)} \given x_{t-1}^{(n)}, \tilde{\psi}^{(n)} \sim \mathcal{N} (x_{t-1}^{(n)}, \tpsi^{(n)}),  &1 < t, \nonumber \\ 
-       &\idx[t] p n = \idx[t] \lambda n \cdot \Delta = \sigma( \idx[t] x n) = \frac{\exp {x_t^{(n)}}}{1+ \exp {x_t^{(n)}}}, &1 \leq t, \nonumber \\
+       &\idx[t] p n = \idx[t] \lambda n \cdot \delta = \sigma( \idx[t] x n) = \frac{\exp {x_t^{(n)}}}{1+ \exp {x_t^{(n)}}}, &1 \leq t, \nonumber \\
      & y_t^{(n)}  = \sum\limits_{r=1}^R  \Delta N_{t,r}^{(n)} \sim \text{Bin}\left(R \cdot M, \idx[t] p n\right) , &1 \leq t \nonumber.
 \end{align}
 where $\bidx \ttheta n = [\idx \tmu n, \log \idx \tpsi n]^\top$ are the parameters of interest.  We can cluster the neuronal units by these parameters by assuming that they arise from the Dirichlet process mixture of Equation \ref{crp}, in which $\bidx \theta k = [\idx \mu k, \log \idx \psi k]^\top = \bidx \ttheta n$ for all $n$ such that $\idx z n = k$.  
 
-The parameter $\mu^{(k)} $ describes the extent to which the exogenous stimulus modulates the response of the neuron -- a positive value of $\mu^{(k)}$ indicates excitation, a negative value indicates inhibition, and a value close to zero indicates no response. The state transition function $f$ imposes a stochastic smoothness constraint on the CIF of neuron $n$, where $\psi^{(k)}$ controls the degree of smoothness.  A small value of $\psi^{(k)}$ suggests that the neurons exhibit a sustained change in response to the stimulus, whereas a large value of $\psi^{(k)}$ indicates that the change is unsustained.  With respect to the DPnSSM, the goal is to cluster the neurons according to the extent of the initial response $\mu^{(k)}$ and the sustainability of this response $\psi^{(k)}$ . 
+The parameter $\mu^{(k)} $ describes the extent to which the exogenous stimulus modulates the response of the neuron -- a positive value of $\mu^{(k)}$ indicates excitation, a negative value indicates inhibition, and a value close to zero indicates no response. The state transition density $f$ imposes a stochastic smoothness constraint on the CIF of neuron $n$, where $\psi^{(k)}$ controls the degree of smoothness.  A small value of $\psi^{(k)}$ suggests that the neurons exhibit a sustained change in response to the stimulus, whereas a large value of $\psi^{(k)}$ indicates that the change is unsustained.  With respect to the DPnSSM, the goal is to cluster the neurons according to the extent of the initial response $\mu^{(k)}$ and how sustained the response is $\psi^{(k)}$ . 
 
 \section{INFERENCE ALGORITHM}
 For conducting posterior inference on the DPnSSM, we introduce a Metropolis-within-Gibbs sampling procedure inspired by Algorithm 8 from \cite{neal2000markov}.  We derive the following process for alternately sampling (1) the cluster assignments $Z \given \bd \Theta, \bd Y, \alpha, G$ and (2) the cluster parameters $\bd \Theta \given Z, \bd Y, \alpha, G$.  A summary of the inference algorithm is given in Algorithm \ref{alg}. Outputs are samples $(\aidx Z i, \aidx {\bd \Theta} i)$ for iterations $i = 1, 2, \ldots, I$.
 
-For any set $S = \{\idx s 1, \ldots, \idx s J\}$, we use the notation $\idx S {-j} = S \setminus \{\idx s j\}$ to denote set $S$ without the $j$-th element. 
+For any set $\mathcal{S} = \{\idx s 1, \ldots, \idx s J\}$, we denote set $\mathcal{S}$ without the $j$-th element as $\idx {\mathcal{S}} {-j} = \mathcal{S} \setminus \{\idx s j\}$.
 
 \subsection{Sampling Cluster Assignments}
 For a given time series $n \in \{1, \ldots, N\}$, we sample its cluster assignment from the distribution: 
@@ -165,16 +162,16 @@ p(\idx z n &\given \idx Z {-n}, \bd \Theta, \bd Y, \alpha, G) \label{clust-assig
 &\propto p(\idx z n \given \idx Z {-n}, \bd \Theta, \alpha, G) \cdot p(\bd Y \given Z, \bd \Theta, \alpha, G) \nonumber \\
 &\propto p(\idx z n \given \idx Z {-n}, \alpha) \cdot p(\bidx y n \given \idx z n, \bd \Theta, G). \nonumber
 \end{align}
-Due to the CRP's exchangeability property, the first term in Equation~(\ref{clust-assign}) can be represented by the categorical distribution,
+The first term in Equation \ref{clust-assign} can be represented by the categorical distribution,
 \begin{numcases}{p(\idx z n = k) = }
 \dfrac{\idx N {k}}{N - 1 + \alpha},  \hspace{0.3em} k = 1, \ldots, K',  \label{discrete}\\
 \dfrac{\alpha / m}{N - 1 + \alpha}, \hspace{0.3em} k = K' + 1, \ldots, K' + m, \nonumber
 \end{numcases}
 where $K'$ is the number of unique $k$ in $\idx Z {-n}$, $\idx N {k}$ is the number of cluster assignments equal to $k$ in $\idx Z {-n}$, and $m \geq 1$ is some {integer algorithmic parameter.} For brevity, we drop the conditioning on $\idx Z {-n}$ and $\alpha$.
 
-The second term in Equation \ref{clust-assign} is equivalent to the parameter likelihood $p(\bidx y n \given \bidx \theta k)$, where $\bidx \theta k$ is known if $k \in \{1, \ldots, K'\}$; otherwise, $\bidx \theta k$ must first be sampled from $G$ if $k \in \{K'+1, \ldots K'+m\}$. In the case of a linear-Gaussian state-space model,~\cite{middleton2014} is able to evaluate this likelihood exactly using a Kalman filter. Since we are modeling $\bidx y n$ as the output of a nonlinear state-space model, we must use particle methods to approximate this parameter likelihood.  Though the standard bootstrap particle filter (BPF)~\citep{doucet2001introduction} offers a solution to this problem, it requires many particles to compute a low-variance estimate at the cost of increased computing time.  {To increase efficiency, we employ a recently proposed method, known as controlled sequential Monte Carlo (cSMC), that significantly reduces the variance of the likelihood estimators for a fixed computational cost~\citep{heng2017controlled}}.  We outline the basic premise behind cSMC in Section \ref{ssec:csmc}.
+The second term in Equation \ref{clust-assign} is equivalent to the parameter likelihood $p(\bidx y n \given \bidx \theta k)$, where $\bidx \theta k$ is known if $k \in \{1, \ldots, K'\}$; otherwise, $\bidx \theta k$ must first be sampled from $G$ if $k \in \{K'+1, \ldots K'+m\}$.  Since $\bidx y n$ is the output of a nonlinear state-space model, we must use particle methods to approximate this parameter likelihood. We employ a recently proposed method known as controlled sequential Monte Carlo (cSMC) to produce low-variance estimates of this likelihood for a fixed computational cost~\citep{heng2017controlled}.  We outline the basic premise behind cSMC in Section \ref{ssec:csmc}.
 
-For the finite mixture case with $K$ clusters, the only change in this step is that Equation \ref{discrete} simply becomes $p(\idx z n = k \given \idx Z {-n}, \bd \alpha) = \idx N k / (N - 1 + \idx \alpha k)$ for all $k$.
+%For the finite mixture case with $K$ clusters, the only change in this step is that Equation \ref{discrete} simply becomes $p(\idx z n = k \given \idx Z {-n}, \bd \alpha) = \idx N k / (N - 1 + \idx \alpha k)$ for all $k$.
 
 \subsection{Sampling Cluster Parameters}
 For a given cluster $k \in \{1, \ldots, K\}$, we wish to sample from the distribution:
@@ -183,15 +180,13 @@ p(\bidx \theta k &\given \bidx \Theta {-k}, Z, \bd Y, \alpha, G) \label{clust-pa
 &\propto p(\bidx \theta k \given \bidx \Theta {-k}, Z, \alpha, G) \cdot p(\bd Y \given \bd \Theta, Z, \alpha, G) \nonumber \\
 &\propto p(\bidx \theta k  \given G) \cdot \prod_{n \given \idx z n = k} p(\bidx y n \given \bidx \theta k). \nonumber
 \end{align}
-The first term of Equation \ref{clust-param} is the pdf of the base distribution, and the second term is a product of parameter likelihoods. Because the likelihood conditioned on class membership involves integration of the state sequence $\bidx x n$, and the prior $G$ is on the parameters of the state sequence, marginalization destroys any conjugacy that might have existed between the state sequence prior and parameter priors. 
+The first term of Equation \ref{clust-param} is the probability density function of the base distribution, and the second term is a product of parameter likelihoods. Because the likelihood conditioned on class membership involves integration of the state sequence $\bidx x n$, and the prior $G$ is on the parameters of the state sequence, marginalization destroys any conjugacy that might have existed between the state sequence prior and parameter priors. 
 
 To sample from the conditional posterior of parameters given cluster assignments, \cite{middleton2014} re-introduces the state sequence as part of his sampling algorithm for the linear Gaussian state-space case. %In effect, he is able to take advantage of the conjugacy between the state sequence and the prior on parameters. 
 We use an approach that obviates the need to re-introduce the state sequence and generalizes to scenarios where the prior on parameter and the state sequence may not have any conjugacy relationships. In particular, our sampler uses a Metropolis-Hastings step with proposal distribution $r(\bd \theta' \given \bd \theta)$ to sample from the class conditional distribution of parameters given cluster assignments. This effectively becomes one iteration of the well-known particle marginal Metropolis-Hastings (PMMH) algorithm \citep{andrieu2010particle}.  To evaluate the second term of Equation \ref{clust-param} for PMMH, we once again choose to use cSMC (Section \ref{ssec:csmc}).   
 
-Note that for finite mixtures, this step of sampling cluster parameters is exactly the same in the inference algorithm.
-
 \subsection{Controlled Sequential Monte Carlo} \label{ssec:csmc}
-Controlled SMC is based on the idea that we can modify a state-space model in such a way that standard bootstrap particle filters give lower variance estimates while the likelihood of interest is kept unchanged. More precisely, the algorithm introduces a collection of positive and bounded functions $\gamma = \{\gamma_1, \ldots, \gamma_T\}$, termed a policy, that alter the transition probabilities of the model in the following way,
+Controlled SMC is based on the idea that we can modify a state-space model in such a way that standard bootstrap particle filters \citep{doucet2001introduction} give lower variance estimates while the likelihood of interest is kept unchanged. More precisely, the algorithm introduces a collection of positive and bounded functions $\gamma = \{\gamma_1, \ldots, \gamma_T\}$, termed a policy, that alter the transition densities of the model in the following way,
 \begin{align}
 h^\gamma(x_1; \bd \theta) &\propto h(x_1; \bd \theta) \cdot \gamma_1(x_1), \\
 f^\gamma_t(x_{t-1}, x_{t}; \bd \theta) &\propto f(x_{t-1}, x_t; \bd \theta) \cdot \gamma_t(x_t), & 1 < t. \nonumber
@@ -202,7 +197,7 @@ To ensure that the likelihood associated with the modified model is the same as 
 \end{align}
 where $S$ is the number of particles and $x_t^s$ is the $s$-th particle at time $t$.  The policy $\gamma$ can be chosen so as to minimize the variance of the above likelihood estimator; the optimal policy minimizing that variance is denoted by $\gamma^{*}$.
 
-When $h, f$ are Gaussian and $g$ is log-concave with respect to $x_t$ (such as in the point-process state-space model of Equation \ref{bssm}), we can justify the approximation of $\gamma^*$ with a series of Gaussian functions. This allows us to solve for $h^{\gamma}, \{f_{t}^{\gamma}\}_{t=2}^T,\{g_{t}^{\gamma}\}_{t=1}^T$ using an approximate backward recursion method that simply reduces to a sequence of constrained linear regressions. We provide a more rigorous treatment of the exact details in Appendix \ref{csmc-app}.  
+When $h, f$ are Gaussian and $g$ is log-concave with respect to $x_t$ (such as in the point-process state-space model of Equation \ref{bssm}), we can justify the approximation of $\gamma^*$ with a series of Gaussian functions. This allows us to solve for $h^{\gamma}, \{f_{t}^{\gamma}\}_{t=2}^T,\{g_{t}^{\gamma}\}_{t=1}^T$ using an approximate backward recursion method that simply reduces to a sequence of constrained linear regressions. We provide a more rigorous treatment of the exact details in \textbf{Appendix \ref{csmc-app}}.  
 
 Starting from an initial policy {$\aidx \gamma 0$}, we can thus run a first bootstrap particle filter and obtain an approximation {$\aidx \gamma 1$} of $\gamma^{*}$. One can then iterate $L$ times to obtain refined policies, and consequently, lower variance estimators of the likelihood. Our empirical testing demonstrates that cSMC can significantly outperform the standard BPF in both precision and efficiency, while keeping $L$ very small. This justifies its use in the DPnSSM inference algorithm.
 
@@ -237,12 +232,12 @@ Starting from an initial policy {$\aidx \gamma 0$}, we can thus run a first boot
 
 
 \section{RESULTS}
-We investigate the efficacy of the DPnSSM model in clustering time series obtained from simulated and real neural spike rasters.
+We investigate the ability of the DPnSSM to cluster time series from simulated and real neuronal rasters.\footnote{Python code for all experiments can be found at \texttt{https://github.com/ds2p/state-space-mixture}.}
 
 \subsection{Selecting Clusters} \label{ssec:sel-clust}
-The output of Algorithm 1 is a set of Gibbs samples $(\aidx Z 1, \baidx \Theta 1), \ldots, (\aidx Z I, \baidx \Theta I)$.  Each sample $(\aidx Z i, \baidx \Theta i)$ may very well use a different number of clusters.  The natural question that remains is how to select a single final clustering $(Z^*, \bd \Theta^*)$ of our data from this output.  There is a great deal of literature on answering this subjective question.  We choose to follow the work of \cite{dahl2006model} and \cite{nieto2014bayesian}.  
+The output of Algorithm 1 is a set of Gibbs samples $(\aidx Z 1, \baidx \Theta 1), \ldots, (\aidx Z I, \baidx \Theta I)$.  Each sample $(\aidx Z i, \baidx \Theta i)$ may very well use a different number of clusters.  The natural question that remains is how to select a single final clustering $(Z^*, \bd \Theta^*)$ of our data from this output.  There is a great deal of literature on answering this subjective question.  We follow the work of \cite{dahl2006model} and \cite{nieto2014bayesian}.  
 
-Each Gibbs sample describes a clustering of the time series; we therefore frame the objective as selecting the most representative sample from our output.  To start, we take each Gibbs sample $i$ and construct an $N$x$N$ co-occurrence matrix $\baidx \Omega i$ in which, 
+Each Gibbs sample describes a clustering of the time series; we therefore frame the objective as selecting the most representative sample from our output.  To start, we take each Gibbs sample $i$ and construct an $N \times N$ co-occurrence matrix $\baidx \Omega i$ in which, 
 \begin{align}
 \baidx [(n, n')] \Omega i =
 \begin{cases}
@@ -251,34 +246,28 @@ Each Gibbs sample describes a clustering of the time series; we therefore frame 
 \end{cases} \label{co-occurrence}
 \end{align}
 This is simply a matrix in which the $(n, n')$ entry is 1 if series $n$ and series $n'$ are in the same cluster for the $i$-th Gibbs sample and 0 otherwise.  {We then define {$\bd \Omega = (I-B)^{-1} \sum_{i=B+1}^I \baidx \Omega i$}} as the mean co-occurrence matrix, where $B \geq 1$ is the number of pre-burn-in samples.  This matrix summarizes information from the entire trace of Gibbs samples.  The sample $i^*$ that we ultimately select is the one that minimizes the Frobenius distance to this matrix, i.e. $i^* = \arg \min_{i} \norm{\baidx \Omega i - \bd \Omega}_F$.
-We use the corresponding assignments and parameters as the final  clustering $(Z^*, \bd \Theta^*) = (\aidx Z {i^*}, \baidx \Theta {i^*})$.  The appeal of this procedure is that it makes use of global information from all the Gibbs samples, yet ultimately selects a single clustering produced by the model.  
-
-If there are $J > 1$ Gibbs samples $i_1^*, \ldots, i_J^*$ such that $\baidx \Omega {i_j^*} = \baidx \Omega {i^*}$ for $j = 1, \ldots, J$, our final cluster parameters $\bd \Theta^*$ can be redefined as the average among the corresponding parameter samples,
-\begin{align} \label{final-params}
-\bd \Theta^* = \frac{1}{J} \sum_{j=1}^J \baidx \Theta {i_j^*} \approx \E[\bd \Theta \given Z = Z^*].
-\end{align}
-This averaging must be proceeded by a permutation of each set of $\bidx \theta 1, \ldots, \bidx \theta K \in \baidx \Theta {i_j^*}$ to fix any potential label switching.   
+We use the corresponding assignments and parameters as the final  clustering $(Z^*, \bd \Theta^*) = (\aidx Z {i^*}, \baidx \Theta {i^*})$.  The appeal of this procedure is that it makes use of global information from all the Gibbs samples, yet ultimately selects a single clustering produced by the model.  If there are multiple Gibbs samples $i_1, \ldots, i_J$ such that $\baidx \Omega {i^*} = \baidx \Omega {i_1} = \ldots = \baidx \Omega {i_J}$, then we redefine $\bd \Theta^*$ as a simple average, as explained in \textbf{Appendix \ref{mult-co}}.     
 
 \subsection{Simulated Neural Spiking Data}
 We conduct a simulated experiment to test the ability of the DPnSSM to yield desired results in a setting in which the ground truth clustering is known. 
 
 \subsubsection{Data Generation} \label{sssec:sim-data}
-We simulate $N = 25$ neuronal rasters that each record data for $R = 45$ trials over the time interval $(-500, \mathcal{T}]$ milliseconds (ms) before/after an exogenous stimulus is applied at 0 ms, where $\mathcal{T} = 1500$.  The resolution of the data is $\Delta = 5$ ms and we observe neuron $n$ firing $\Delta \idx[t, r] N n$ times during the $t$-th discrete time interval $(t\Delta - \Delta, t\Delta]$ for trial $r$.  
+We simulate $N = 25$ neuronal rasters that each record data for $R = 45$ trials over the time interval $(-500, \mathcal{T}]$ milliseconds (ms) before/after an exogenous stimulus is applied at 0 ms, where $\mathcal{T} = 1500$.  For each trial, the resolution of the binary event sequence is $\delta = 1$ ms.  We create bins of size  $\Delta =  M \cdot \delta$, where $M = 5$, and observe neuron $n$ firing $\Delta \idx[t, r] N n \leq M$ times during the $t$-th discrete time interval $(t\Delta - \Delta, t\Delta]$ for trial $r$.  
 
-We use the following process for generating the simulated data:  For each neuron $n$, the initial rate is independently drawn as $\idx \hlambda n \sim \text{Uniform}(10, 15)$ Hz.  Each neuron's \emph{type} is determined by the evolution of its discrete-time CIF  $\idx[t] \lambda n $ over time.  We split the discrete-time intervals into three parts -- $\bd t_1 = \{-99, \ldots, 0\}$, $\bd t_2 = \{1, \ldots, 50\}$, and $\bd t_3 = \{51, \ldots, 300\}$.  We generate five neurons each of the following five types: 
+We use the following process for generating the simulated data:  For each neuron $n$, the initial rate is independently drawn as $\idx \lambda n \sim \text{Uniform}(10, 15)$ Hz.  Each neuron's \emph{type} is determined by the evolution of its discrete-time CIF  $\idx[t] \lambda n $ over time.  We split the discrete-time intervals into three parts -- $\bd t_1 = \{-99, \ldots, 0\}$, $\bd t_2 = \{1, \ldots, 50\}$, and $\bd t_3 = \{51, \ldots, 300\}$.  We generate five neurons each of the following five types: 
 \begin{enumerate}[noitemsep,nolistsep]
-\item \emph{Excited, sustained} neurons with rate $\idx[t] \lambda n = \idx \hlambda n$ for $t \in \bd t_1$; rate $\idx[t] \lambda n = \idx \hlambda n \cdot \exp(1)$ for $t \in \bd t_2, \bd t_3$
-\item \emph{Inhibited, sustained} neurons with rate $\idx[t] \lambda n = \idx \hlambda n$ for $t \in \bd t_1$; rate $\idx[t] \lambda n = \idx \hlambda n \cdot \exp(-1)$ for $t \in \bd t_2, \bd t_3$
-\item \emph{Non-responsive} neurons with rate $\idx[t] \lambda n = \idx \hlambda n$ for $t \in \bd t_1, \bd t_2, \bd t_3$
-\item \emph{Excited, unsustained} neurons with rate $\idx[t] \lambda n = \idx \hlambda n$ for $t \in \bd t_1$; rate $\idx[t] \lambda n = \idx \hlambda n \cdot \exp(1)$ for $t \in \bd t_2$; rate $\idx[t] \lambda n = \idx \hlambda n$ for $t \in \bd t_3$
-\item \emph{Inhibited, unsustained} neurons with rate $\idx[t] \lambda n = \idx \hlambda n$ for $t \in \bd t_1$; rate $\idx[t] \lambda n = \idx \hlambda n \cdot \exp(-1)$ for $t \in \bd t_2$; rate $\idx[t] \lambda n = \idx \hlambda n$ for $t \in \bd t_3$
+\item \emph{Excited, sustained} neurons with rate $\idx[t] \lambda n = \idx \lambda n$ for $t \in \bd t_1$; rate $\idx[t] \lambda n = \idx \lambda n \cdot \exp(1)$ for $t \in \bd t_2, \bd t_3$.
+\item \emph{Inhibited, sustained} neurons with rate $\idx[t] \lambda n = \idx \lambda n$ for $t \in \bd t_1$; rate $\idx[t] \lambda n = \idx \lambda n \cdot \exp(-1)$ for $t \in \bd t_2, \bd t_3$.
+\item \emph{Non-responsive} neurons with rate $\idx[t] \lambda n = \idx \lambda n$ for $t \in \bd t_1, \bd t_2, \bd t_3$.
+\item \emph{Excited, unsustained} neurons with rate $\idx[t] \lambda n = \idx \lambda n$ for $t \in \bd t_1$; rate $\idx[t] \lambda n = \idx \lambda n \cdot \exp(1)$ for $t \in \bd t_2$; rate $\idx[t] \lambda n = \idx \lambda n$ for $t \in \bd t_3$.
+\item \emph{Inhibited, unsustained} neurons with rate $\idx[t] \lambda n = \idx \lambda n$ for $t \in \bd t_1$; rate $\idx[t] \lambda n = \idx \lambda n \cdot \exp(-1)$ for $t \in \bd t_2$; rate $\idx[t] \lambda n = \idx \lambda n$ for $t \in \bd t_3$.
 \end{enumerate}
-
-Within a time span of $\Delta$, the maximum possible number of firings for any neuron is $M = 5$; that is, $\Delta \idx[t, r] N n \leq 5$ for all $n, t, r$.  Thus, following the point-process state-space model of Equation \ref{bssm} -- which assumes i.i.d. trials -- we simulate, 
+%Within a time span of $\Delta$, the maximum possible number of firings for any neuron is $M = 5$; that is, $\Delta \idx[t, r] N n \leq 5$ for all $n, t, r$.  
+Following the point-process state-space model of Equation \ref{bssm} -- which assumes i.i.d. trials -- we simulate, 
 \begin{align}
 \idx[t] y n = \sum_{r=1}^{R=45} \Delta \idx[t, r] N n &\sim \text{Bin}(R \cdot M = 225, \idx[t] p n),
 \end{align}
-where $\idx[t] p n = \idx[t] \lambda n \cdot \Delta$ for $t = -99, \ldots, 300$.  These are the observations $\bd Y = \{\bidx y 1, \ldots, \bidx y N\}$ that are fed to the DPnSSM.  The model is then tasked with figuring out the original ground-truth clustering.
+where $\idx[t] p n = \idx[t] \lambda n \cdot \delta$ for $t = -99, \ldots, 300$.  These are the observations $\bd Y = \{\bidx y 1, \ldots, \bidx y N\}$ that are fed to the DPnSSM.  The model is then tasked with figuring out the original ground-truth clustering.
 
 \subsubsection{Modeling} \label{sim-model-details}
 In modeling these simulated data as coming from the DPnSSM, we employ the generative process specified by Equation \ref{bssm}; that is,
@@ -289,23 +278,20 @@ In modeling these simulated data as coming from the DPnSSM, we employ the genera
 \end{align} 
 where cluster parameters are $\bidx \theta k = [\idx \mu k, \log \idx \psi k]^\top$.  
  
-The series are fed into Algorithm \ref{alg} with hyperparameter values $\alpha = 1$, $G = [\Norm(0, 2), \text{Unif}(-15, 0)]^\top$, and $m = 5$.  For every series $n$, we compute the initial state $\idx[0] x n = \sigma^{-1}(1 / 500 \cdot \sum_{t=-99}^{0} \idx[t] y n)$ from the observations before the stimulus in that series.  In addition, we let $\psi_0 = 10^{-10}$, a very small value that forces any change in the latent state at $t = 1$ to be explained by the cluster parameter $\idx \mu k$.  The initial clustering $(\aidx Z 0, \baidx \Theta 0) = (\bd 1, \bd \theta_0)$, where $\bd 1$ is a vector of $N$ ones denoting that every series begins in the same cluster and $\bd \theta_0$ is sampled from $G$.  For the proposal $r(\bd \theta' \given \bd \theta)$, we use a $\Norm(\bidx \theta k,  0.25 \cdot \mathcal{I})$ distribution, where $\mathcal{I}$ is the 2x2 identity matrix.  We run the sampling procedure for $I$ = 10,000 iterations and apply a burn-in of $B$ = 1,000 samples. To compute likelihood estimates, we use $L = 3$ cSMC iterations and $S = 64$ particles.  
+The series are fed into Algorithm \ref{alg} with hyperparameter values $\alpha = 1$, $G[\mu, \psi] = [\Norm(0, 2), \text{Unif}(-15, 0)]$, and $m = 5$.  For every series $n$, we compute the initial state $\idx[0] x n = \sigma^{-1}(1 / 500 \cdot \sum_{t=-99}^{0} \idx[t] y n)$ from the observations before the stimulus in that series.  In addition, we let $\psi_0 = 10^{-10}$, a very small value that forces any change in the latent state at $t = 1$ to be explained by the cluster parameter $\idx \mu k$.  The initial clustering $(\aidx Z 0, \baidx \Theta 0) = (\bd 1, \bd \theta_0)$, where $\bd 1$ is a vector of $N$ ones denoting that every series begins in the same cluster and $\bd \theta_0$ is sampled from $G$.  For the proposal $r(\bd \theta' \given \bd \theta)$, we use a $\Norm(\bidx \theta k,  0.25 \cdot {\bold I})$ distribution, where $\bold I$ is the $2 \times 2$ identity matrix.  We run the sampling procedure for $I$ = 10,000 iterations and apply a burn-in of $B$ = 1,000 samples. To compute likelihood estimates, we use $L = 3$ cSMC iterations and $S = 64$ particles.  
 
-A heatmap of the resultant mean co-occurrence matrix $\bd \Omega$ (Equation \ref{co-occurrence}) and the selected clustering $\baidx \Omega {i^*}$ can be found in Figure \ref{sim-hm}.  The rows and columns of this matrix have been reordered to aid visualization of clusters along the diagonal of $\bd \Omega$.  From this experiment, we can see that the DPnSSM inference algorithm is able to successfully recover the five ground-truth clusters.  
+A heatmap of the resultant mean co-occurrence matrix $\bd \Omega$ (Equation \ref{co-occurrence}) and the selected clustering $\baidx \Omega {i^*}$ can be found in Figure \ref{sim-hm}.  The rows and columns of this matrix have been reordered to aid visualization of clusters along the diagonal of $\bd \Omega$.  From this experiment, we can see that the DPnSSM inference algorithm is able to successfully recover the five ground-truth clusters.  \textbf{Appendix \ref{sim-robust}} present some results on the robustness of the model to misspecification of the stimulus onset.     
 
-Table \ref{sim-table} summarizes the final cluster parameters $\bd \Theta^*$ computed using Equation \ref{final-params}.  As one may expect, a highly positive $\idx {\mu^*} k$ corresponds to neurons that are excited by the stimulus, while a highly negative $\idx {\mu^*} k$ corresponds to neurons that are inhibited.  The one cluster with $\idx {\mu^*} k \approx 0$ corresponds to non-responsive neurons.  With $\idx {\mu^*} k$, the algorithm seems to be able to approximately recover the true amount by which the stimulus increases or decreases the log of the firing rate/probability, which is stated in Section \ref{sssec:sim-data} -- e.g. $+1$ for $k \in \{1, 4\}$, $-1$ for $k \in \{2, 5\}$ and $\pm 0$ for $k = 3$.  This provides an interpretation of the numerical value of $\idx \mu k$ in Equation \ref{sim-model}.  Indeed, given $\exp \idx[0] x n, \exp \idx[1] x n << 1$, as is often the case when modeling neurons, then the expected increase in the log of the firing probability due to the stimulus is: 
+Table \ref{sim-table} summarizes the final cluster parameters $\bd \Theta^*$.  As one may expect, a highly positive $\idx {\mu^*} k$ corresponds to neurons that are excited by the stimulus, while a highly negative $\idx {\mu^*} k$ corresponds to neurons that are inhibited.  The one cluster with $\idx {\mu^*} k \approx 0$ corresponds to non-responsive neurons.  With $\idx {\mu^*} k$, the algorithm is able to approximately recover the true amount by which the stimulus increases or decreases the log of the firing rate/probability, which is stated in Section \ref{sssec:sim-data} -- i.e. $+1$ for $k \in \{1, 4\}$, $-1$ for $k \in \{2, 5\}$ and $0$ for $k = 3$.  This provides an interpretation of the numerical value of $\idx \mu k$.  Indeed, if $\exp \idx[0] x n < < 1, \exp \idx[1] x n << 1$, as is often the case when modeling neurons, then the expected increase in the log of the firing probability due to the stimulus is: 
 \begin{align}
-\E & \left[\log \frac{\sigma(\idx[1] x n)}{\sigma(\idx[0] x n)}\right] = \E\left[\log \frac{\exp \idx[1] x n / (1 + \exp \idx[1] x n)}{\exp \idx[0] x n / (1 + \exp \idx[0] x n)} \right] \\
-&\approx \E \left[\log \frac{\exp \idx[1] x n}{\exp \idx[0] x n} \right] = \E[\idx[1] x n - \idx[0] x n] = \idx \mu k. \nonumber
+\E & \left[\log \frac{\sigma(\idx[1] x n)}{\sigma(\idx[0] x n)}\right] \approx \E \left[\log \frac{\exp \idx[1] x n}{\exp \idx[0] x n} \right] = \idx \mu k.
 \end{align}   
 
-Looking at the values for $\log \idx {\psi^*} k$ in Table \ref{sim-table}, we can also see that the algorithm uses this dimension to correctly separate unsustained clusters from sustained ones.  For $k \in \{1, 2, 3\}$, the algorithm infers smaller values of $\log \idx {\psi^*} k$ because the change in the firing rate is less variable after the stimulus has taken place, whereas the opposite is true for $k \in \{4, 5\}$.  
-
-In summary, the DPnSSM is able to recover some of the key properties of the data in an unsupervised fashion, thereby demonstrating its utility on this toy example.
+In addition, the values for $\log \idx {\psi^*} k$ in Table \ref{sim-table} reveal that the algorithm uses this dimension to correctly separate unsustained clusters from sustained ones.  For $k \in \{1, 2, 3\}$, the algorithm infers smaller values of $\log \idx {\psi^*} k$ because the change in the firing rate is less variable after the stimulus has taken place, whereas the opposite is true for $k \in \{4, 5\}$.  In summary, the DPnSSM is able to recover some of the key properties of the data in an unsupervised fashion, thereby demonstrating its utility on this toy example.
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[scale=0.33]{../img/sim.pdf}
+\includegraphics[scale=0.3]{../img/sim.pdf}
 \end{center}
 \caption{Heatmap of mean co-occurrence matrix $\bd \Omega$ for simulation results.  Elements of the selected co-occurrence matrix $\baidx \Omega {i^*}$ that are equal to 1 are enclosed in green squares.  Each square corresponds to a distinct cluster.}
 \label{sim-hm}
@@ -318,33 +304,33 @@ In summary, the DPnSSM is able to recover some of the key properties of the data
 \begin{tabular}{c|ccl}
 $k$ & $\idx {\mu^*} k$ & $\log \idx {\psi^*} k$ &\textbf{Effect} \\
 \hline
-$1$ & $+0.96$ & $-10.88$ &  excited, sustained \\
-$2$ &$-0.92$ & $-12.32$ & inhibited, sustained \\
-$3$ &$+0.03$ & $-10.04$  & non-responsive \\
-$4$ &$+1.04$ & $-5.55$ & excited, unsustained\\
-$5$ &$-0.89$ & $-5.89$ & inhibited, unsustained
+$1$ & $+0.96$ & $-10.88$ &  Excited, Sustained \\
+$2$ &$-0.92$ & $-12.32$ & Inhibited, Sustained \\
+$3$ &$+0.03$ & $-10.04$  & Non-responsive \\
+$4$ &$+1.04$ & $-5.55$ & Excited, Unsustained\\
+$5$ &$-0.89$ & $-5.89$ & Inhibited, Unsustained
 \end{tabular}
 \vspace{-4mm}
 \end{center}
 \end{table}
   
 \subsection{Real Neural Spiking Data}
-In addition to simulations, we produce clusterings on real-world neural spiking data collected in a fear-conditioning experiment in mice designed to elucidate the nature of neural circuits that facilitate the associative learning of fear. The detailed experimental paradigm is described in~\cite{allsop2018corticoamygdala}.  In short, an observer mouse observes a demonstrator mouse receive conditioned cue-shock pairings through a perforated transparent divider. The experiment consists of $R = 45$ trials. During the first 15 trials of the experiment, both the observer and the demonstrator hear an auditory cue at time $\tau = 0$ ms. From trial 16 onwards, the auditory cue is followed by the delivery of a shock to the demonstrator at time $\tau$ = 10,000 ms, i.e. 10 seconds after the cue's administration. 
+In addition to simulations, we produce clusterings on real-world neural spiking data collected in a fear-conditioning experiment designed to elucidate the nature of neural circuits that facilitate the associative learning of fear. The detailed experimental paradigm is described in~\cite{allsop2018corticoamygdala}.  In short, an observer mouse observes a demonstrator mouse receive conditioned cue-shock pairings through a perforated transparent divider. The experiment consists of $R = 45$ trials. During the first 15 trials of the experiment, both the observer and the demonstrator hear an auditory cue at time $\tau = 0$ ms. From trial 16 onwards, the auditory cue is followed by the delivery of a shock to the demonstrator at time $\tau$ = 10,000 ms, i.e. 10 seconds after the cue's administration. 
 
-The data is recorded from various neurons in the anterior cingulate cortex in the prefrontal cortex of the observer mouse.  We apply our analysis to $N = 33$ neurons from this experiment that form a network hypothesized to be involved in the observational learning of fear.  Our time interval of focus is $(-500, \mathcal{T} = 1500]$ ms before/after the administration of the cue.  The raster data comes in the form of $\{\Delta \idx[t, r] N n\}_{t=1, r=1}^{T, R}$, sampled at a resolution of $\Delta = 5$ ms with $T = 300$, where each $\Delta \idx[t, r] N n \leq M = 5$.  
+The data are recorded from various neurons in the prefrontal cortex of the observer mouse.  We apply our analysis to $N = 33$ neurons from this experiment that form a network hypothesized to be involved in the observational learning of fear.  Our time interval of focus is $(-500, \mathcal{T} = 1500]$ ms before/after the administration of the cue.  The raster data comes in the form of $\{\Delta \idx[t, r] N n\}_{t=1, r=1}^{T, R}$, binned at a resolution of $\Delta = 5$ ms with $T = 300$, where each $\Delta \idx[t, r] N n \leq M = 5$.  
 
 We apply DPnSSM to identify various groups of responses in reaction to the auditory cue over time and over trials.  A group of neurons that respond significantly after trial 16 can be interpreted as one that allows the observer to understand when the demonstrator is in distress.
 
 \subsubsection{Clustering Cue Data over Time} \label{sssec:time-data}
 To cluster neurons by their cue responses over time, we collapse the raster for all neurons over the $R = 45$ trials.  Thus, for neuron $n$, define $\idx[t] y n = \sum_{r=1}^R \Delta \idx[t, r] N n$.  We apply the exact same model as the one used for the simulations (Equation \ref{sim-model}).  We also use all of the same hyperparameter values, as detailed in Section \ref{sim-model-details}.
 
-A heatmap of $\bd \Omega$ along with demarcations of $\baidx \Omega {i^*}$ for this experiment can be found in Figure \ref{cue-hm}. Overall, five clusters are selected by the algorithm.  Table \ref{cue-table} summarizes the chosen cluster parameters. Figure \ref{cue-rasters} shows two of the five clusters identified by the algorithm, namely those corresponding to $k = 1$ (Figure \ref{cue-rasters}a) and $k = 5$ (Figure \ref{cue-rasters}b). Figures for all other clusters can be found in Appendix \ref{raster-plots}.  Each of the figures was created by overlaying the rasters from neurons in the corresponding cluster. The fact that the overlaid rasters resemble the raster from a single unit (as opposed to random noise) with plausible parameter values in Table \ref{cue-table} indicates that the algorithm has identified a sensible clustering of the neurons. 
+A heatmap of $\bd \Omega$ along with demarcations of $\baidx \Omega {i^*}$ for this experiment can be found in Figure \ref{cue-hm}. Overall, five clusters are selected by the algorithm.  Table \ref{cue-table} summarizes the chosen cluster parameters. Figure \ref{cue-rasters} shows two of the five clusters identified by the algorithm, namely those corresponding to $k = 1$ (Figure \ref{cue-rasters}a) and $k = 5$ (Figure \ref{cue-rasters}b). Figures for all other clusters can be found in \textbf{Appendix \ref{raster-plots}}.  Each of the figures was created by overlaying the rasters from neurons in the corresponding cluster. The fact that the overlaid rasters resemble the raster from a single unit (as opposed to random noise), with plausible parameter values in Table \ref{cue-table}, indicates that the algorithm has identified a sensible clustering of the neurons. 
 
-The algorithm is able to successfully differentiate various types of responses to the cue as well as the variability of the responses. One advantage of not restricting the algorithm to a set number of classes a priori is that it can decide what number of classes best characterizes this data. In this case, the inference algorithm identifies five different clusters. We defer a scientific interpretation of this phenomenon to a later study. 
+The algorithm is able to successfully differentiate various types of responses to the cue as well as the variability of the responses. One advantage of not restricting the algorithm to a set number of classes a priori is that it can decide what number of classes best characterizes these data. In this case, the inference algorithm identifies five different clusters. We defer a scientific interpretation of this phenomenon to a later study. 
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[scale=0.33]{../img/cue.pdf}
+\includegraphics[scale=0.3]{../img/cue.pdf}
 \end{center}
 \caption{Heatmap of mean co-occurence matrix for cue data over time and selected clusters (green).} 
 \label{cue-hm}
@@ -352,10 +338,10 @@ The algorithm is able to successfully differentiate various types of responses t
 
 \begin{table}[h]
 \vspace{-3mm}
-\caption{Cluster parameters for cue data over time.  $\idx {N^*} k$ denotes how many neurons are in cluster $k$.} \label{sample-table} \label{cue-table}
+\caption{Cluster parameters for cue data over time.} \label{sample-table} \label{cue-table}
 \begin{center}
 \begin{tabular}{c|cccl}
-$k$ & $\idx {\mu^*} k$ & $\log \idx {\psi^*} k$ &$\idx {N^*} k$ \\
+$k$ & $\idx {\mu^*} k$ & $\log \idx {\psi^*} k$ &\# of Neurons \\
 \hline
 $1$ & $+0.54$ & $-6.27$ & 17  \\
 $2$ &$+0.03$ & $-6.80$ & 1 \\
@@ -368,8 +354,8 @@ $5$ &$+1.21$ & $-4.52$ & 3
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[scale=0.5]{../img/cue-raster-a.pdf}
-\includegraphics[scale=0.5]{../img/cue-raster-b.pdf}
+\includegraphics[scale=0.45]{../img/cue-raster-a.pdf}
+\includegraphics[scale=0.45]{../img/cue-raster-b.pdf}
 \end{center}
 \vspace{-4mm}
 \caption{Overlaid raster plots of neuronal clusters with (a) moderately excited $(\idx {\mu^*} 1 = 0.54)$ and somewhat sustained ($\log \idx {\psi^*} 1 = -6.27$) responses to the cue; and (b) more excited $(\idx {\mu^*} 5 = 1.21)$ and less sustained responses ($\log \idx {\psi^*} 5 = -4.52$) to the cue.  A black dot at $(\tau, r)$ indicates a spike from one of the neurons in the corresponding cluster at time $\tau$ during trial $r$. The vertical green line indicates cue onset.} \label{cue-rasters}
@@ -377,7 +363,7 @@ $5$ &$+1.21$ & $-4.52$ & 3
 
 
 \subsubsection{Clustering Cue Data over Trials} \label{cue-cluster}%Neurons that are excited or inhibited in response to the shock form ``empathy clusters". 
-We also apply DPnSSM to determine if neurons can be classified according to varying degrees of neuronal signal modulation when shock is delivered to another animal, as opposed to when there is no shock delivered. The shock is administered starting at the 16th trial over the 45 trials. Thus, to understand the varying levels of shock effect, we collapse the raster across the $T = 300$ time points (instead of the $R = 45$ trials, as was done in Section \ref{sssec:time-data}). In this setting, each $\idx[r] y n = \sum_{t=1}^T \Delta \idx[t, r] N n \in \{0, 1, \ldots, 2000\}$ represents the number of firings during the $r$-th trial.  For each neuron $n$, let the initial state be $\idx[0] x n = \sigma^{-1}(1 / 15 \cdot \sum_{r=1}^{15} \idx[r] y n)$.  Then, we use the following state-space framework: 
+We also apply DPnSSM to determine if neurons can be classified according to varying degrees of neuronal signal modulation when shock is delivered to another animal, as opposed to when there is no shock delivered. The shock is administered starting from the 16th trial onwards. Thus, to understand the varying levels of shock effect, we collapse the raster across the $T = 300$ time points (instead of the $R = 45$ trials, as was done in Section \ref{sssec:time-data}). In this setting, each $\idx[r] y n = \sum_{t=1}^T \Delta \idx[t, r] N n \in \{0, 1, \ldots, 2000\}$ represents the number of firings during the $r$-th trial.  For each neuron $n$, let the initial state be $\idx[0] x n = \sigma^{-1}(1 / 15 \cdot \sum_{r=1}^{15} \idx[r] y n)$.  Then, we use the following state-space model: 
 \begin{align}
 \idx[16] x n &\sim \Norm(\idx[0] x n + \idx \mu k, \psi_0),\\
 \idx[r] x n \given \idx[r-1] x n &\sim \Norm(\idx[r-1] x n, \idx \psi k), & & 16 < r \leq R , \nonumber \\
@@ -385,10 +371,10 @@ We also apply DPnSSM to determine if neurons can be classified according to vary
 \end{align} 
 where once again the cluster parameters are $\bidx \theta k = [\idx \mu k, \log \idx \psi k]^\top$.  All other hyperparameter values are the same as those listed in Section \ref{sim-model-details}.  
 
-The corresponding heatmap, representative raster plots, and clustering results can be found in Figures \ref{shock-hm}, \ref{shock-rasters}, and Table \ref{shock-table}, respectively. We speculate that the results suggest the existence of what we term \emph{empathy clusters}, namely groups of neurons that allow an observer to understand when the demonstrator is in distress. We will explore the implications of these findings to the neuroscience of observational learning of fear in future work.
+The corresponding heatmap, representative raster plots, and clustering results can be found in Figure \ref{shock-hm}, Figure \ref{shock-rasters}, and Table \ref{shock-table}, respectively. We speculate that the results suggest the existence of what we term \emph{empathy clusters}, namely groups of neurons that allow an observer to understand when the demonstrator is in distress. We will explore the implications of these findings to the neuroscience of observational learning of fear in future work.
 \begin{figure}[h]
 \begin{center}
-\includegraphics[scale=0.33]{../img/shock_mod_cue.pdf}
+\includegraphics[scale=0.3]{../img/shock_mod_cue.pdf}
 \end{center}
 \caption{Heatmap of mean co-occurence matrix for cue data over trials and selected clusters (green).} 
 \label{shock-hm}
@@ -417,7 +403,7 @@ The corresponding heatmap, representative raster plots, and clustering results c
 \caption{Cluster parameters for cue data over trials.} \label{shock-table}
 \begin{center}
 \begin{tabular}{c|cccl}
-$k$ & $\idx {\mu^*} k$ & $\log \idx {\psi^*} k$ &$\idx {N^*} k$ \\
+$k$ & $\idx {\mu^*} k$ & $\log \idx {\psi^*} k$ &\# of Neurons \\
 \hline
 $1$ & $+0.19$ & $-5.29$ & 8  \\
 $2$ &$-0.14$ & $-4.40$ & 11 \\
@@ -431,8 +417,8 @@ $5$ &$-0.42$ & $-0.41$ & 2
 
 \begin{figure}[h]
 \begin{center}
-\includegraphics[scale=0.5]{../img/shock-mod-cue-raster-a.pdf}
-\includegraphics[scale=0.5]{../img/shock-mod-cue-raster-b.pdf}
+\includegraphics[scale=0.45]{../img/shock-mod-cue-raster-a.pdf}
+\includegraphics[scale=0.45]{../img/shock-mod-cue-raster-b.pdf}
 \end{center}
 \caption{(a) Overlaid raster plots of neuronal clusters with (a) slightly inhibited, variable responses ($k = 2)$ and (b) very excited, variable responses ($k = 4$). The red line marks the first trial with shock administration.} \label{shock-rasters}
 \end{figure}
@@ -450,21 +436,20 @@ $5$ &$-0.42$ & $-0.41$ & 2
 %\end{figure}
 
 
-\subsection{Controlled SMC Versus BPF}
-Finally, we present some computational results on the advantages of using controlled sequential Monte Carlo over the bootstrap particle filter. Computing the parameter likelihood is a fundamental task in Algorithm \ref{alg}. In each Gibbs iteration, we perform $O(N \cdot K)$ particle filter computations during the sampling of the cluster assignments and another $O(N)$ particle filter computations during the sampling of the cluster parameters. Thus, for both the efficiency and precision of the algorithm, it is necessary to find a fast way to compute low-variance estimates. 
+\subsection{Controlled SMC Versus BPF} \label{ssec:bpf-csmc}
+Finally, we present some results on the advantages of using controlled sequential Monte Carlo over the bootstrap particle filter. Computing the parameter likelihood is a key task in Algorithm \ref{alg}. In each iteration, we perform $O(N \cdot K)$ particle filter computations during the sampling of the cluster assignments and another $O(N)$ particle filter computations during the sampling of the cluster parameters. Thus, for both the efficiency and precision of the algorithm, it is necessary to find a fast way to compute low-variance estimates. 
 
-Figure \ref{csmc} demonstrates the benefits of using cSMC over BPF for likelihood evaluation for a fixed computational cost.  In some cases, cSMC estimates have variances that are several orders of magnitude lower than those produced by BPF.  This is especially true for low values of the variability parameter $\log \psi$, which is crucial for this application since these are often the ones that maximize the parameter likelihood.  
+Figure \ref{bpf-csmc} demonstrates the benefits of using cSMC over BPF for likelihood evaluation for a fixed computational cost.  Details on this experiment can be found in \textbf{Appendix \ref{csmc-bpf-app}}. In some cases, cSMC estimates have variances that are several orders of magnitude lower than those produced by BPF.  This is especially true for low values of the variability parameter $\log \psi$, which is crucial for this application since these are often the ones that maximize the parameter likelihood.  
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[scale=0.5]{../img/bpf-vs-csmc.pdf}
-\caption{Results on running BPF (with $S = 1024$ particles) and cSMC (with $S = 64$ particles, $L = 3$ iterations) on computing the log parameter likelihood for a representative neuron's cue responses over time $\bd y$.  Computational cost is fixed at $\approx 35$ ms per likelihood evaluation.  For each particle filtering method, let $v(\mu, \psi) = \Var[\log p(\bd y \given \bd \theta)]$, where $\bd \theta = [\mu, \log \psi]^\top$.  We plot an empirical estimation of $v$, i.e. $\hat{v}$, over different values of $(\mu, \psi)$ for the two methods.  For each empirical variance data point, we use 500 estimations of $\log p(\bd y \given \bd \theta)$.  As $\log \psi$ decreases, cSMC performs substantially better than BPF, especially for extreme values of $\mu$.} \label{csmc}
+\includegraphics[scale=0.42]{../img/bpf-vs-csmc.pdf}
+\caption{Using BPF versus cSMC for parameter log-likelihood computation.  For each method, we plot an estimate of the variance $\hat{v}(\mu, \psi) \approx \Var[\log p(\bd y \given \bd \theta)]$, where $\bd \theta = [\mu, \log \psi]^\top$, over different values of $(\mu, \psi)$.} \label{bpf-csmc}
 \end{center}
 \end{figure}
 
-
 \section{CONCLUSION}
-We proposed a general framework to cluster time series with nonlinear dynamics modeled by nonlinear state-space models. To the best of the authors' knowledge, this is the first Bayesian framework for clustering time series that exhibit nonlinear dynamics. The backbone of the framework is the cSMC algorithm for low-variance evaluation of parameter likelihoods in nonlinear state-space models. We applied the framework to neural data in an experiment designed to elucidate the neural underpinnings of the observational learning of fear in mice. {We were able to identify potential clusters of neurons that allow an observer to understand when the demonstrator is in distress.}
+We proposed a general framework to cluster time series with nonlinear dynamics modeled by nonlinear state-space models. To the best of the authors' knowledge, this is the first Bayesian framework for clustering time series that exhibit nonlinear dynamics. The backbone of the framework is the cSMC algorithm for low-variance evaluation of parameter likelihoods in nonlinear state-space models. We applied the framework to neural data in an experiment designed to elucidate the neural underpinnings of fear. We were able to identify potential clusters of neurons that allow an observer to understand when a demonstrator is in distress.
 %We were able to identify ``empathy clusters''. In the experiment, one mouse observes another mouse while the latter receives an electric shock. The ``empathy clusters'' are groups of neurons from which we can infer that the brain of the observer mouse has learned to empathize with the mouse receiving the shock.
 
 In future work, we plan to perform detailed analyses of the data from these experiments~\citep{allsop2018corticoamygdala}, and the implications of these analyses on the neuroscience of the observational learning of fear in mice. We will also explore applications of our model to data in other application domains such as sports and sleep research \citep{st2017modeling}, to name a few.
@@ -483,7 +468,30 @@ The authors thank Amazon Web Services (AWS) for the assistance of computational 
 \makeatother
 \algnewcommand{\parState}[1]{\State \parbox[t]{\dimexpr\linewidth-\algmargin}{\strut #1\strut}}
 
-\textbf{\huge Appendices}
+\begin{center}
+{\huge \textbf{APPENDICIES}}
+\end{center}
+
+\section{MODEL EXTENSIONS} \label{model-extensions}
+
+\subsection{Multidimensional Time Series}
+Although this paper only considers examples in which each $\idx[t] x n \in \R$ and each $\idx[t] y n$ is one-dimensional, our model and inference algorithm are extendable to cases in which observed time series and/or latent states have multiple dimensions.   For example, as demonstrated in Section 5.2 of \citep{heng2017controlled}, cSMC scales well with a 64-dimensional vector time series model, suggesting that our proposed clustering approach with particle filtering is also applicable to multivariate series. 
+
+\subsection{Finite Mixture of Time Series}
+It is simple to convert our model into one in which the true number of clusters $K$ is known a priori.  Instead of using a Dirichlet process, we can simply use a Dirichlet($\bd \alpha$) distribution in which $\bd \alpha$ is a $K$-dimensional vector with each $\idx \alpha k > 0$ for $k = 1, \ldots, K$.  Then, we can modify Equation \ref{crp} as:
+\begin{align*}
+\bd q \given \bd \alpha &\sim \text{Dirichlet}(\bd \alpha), \\
+\idx z 1, \ldots, \idx z N \given \bd q &\sim \text{Multinomial}(N, \bd q), \\
+\bidx \theta k \given G &\sim G, & 1 \leq k \leq K,
+\end{align*} 
+where $\bd q$ is an intermediary variable that is easy to integrate over.  
+
+The resultant inference algorithm is simpler.  The only necessary modification to Algorithm \ref{alg} is that, when sampling cluster assignments, there is no longer any need for an auxiliary integer parameter $m \geq 1$ to represent the infinite mixture.  Thus, Equation \ref{discrete} becomes 
+\begin{align*}
+p(\idx z n = k \given \idx Z {-n}, \bd \alpha) = \frac{\idx N k}{N - 1 + \idx \alpha k}, & & k = 1, \ldots, K,
+\end{align*}
+where $\idx N k$ is the number of cluster assignments equal to $k$ in $\idx Z {-n}$.  The process of sampling cluster parameters remains exactly the same as in the infinite mixture case.   
+
 \section{CONTROLLED SEQUENTIAL MONTE CARLO} \label{csmc-app}
 
 A key step in sampling both the cluster assignments and the cluster parameters of Algorithm \ref{alg} is computing the parameter likelihood $p(\bd y \given \bd \theta)$ for an observation vector $\bd{y} = y_1, \ldots, y_T$ and a given set of parameters $\bd \theta$.  
@@ -514,7 +522,7 @@ is an unbiased estimate of the parameter likelihood $p(\bd y \given \bd \theta)$
     \parState{Normalize $\{w_1^s\}_{s=1}^S = \{w_1^s\}_{s=1}^S / \sum_{s=1}^S w_1^s$.}
     \For{$t = 2, \ldots, T$}
     	\For{$s = 1, \ldots, S$}
-		\parState{Resample ancestor index $a \sim \text{$\mathcal{C}$ategorical}(w_{t-1}^1, \ldots, w_{t-1}^S)$.}
+		\parState{Resample ancestor index $a \sim \text{Categorical}(w_{t-1}^1, \ldots, w_{t-1}^S)$.}
     		\parState{Sample $x_t^s \sim f(x^a_{t-1}, x_t; \bd \theta)$ and weight $w_t^s = g(x_t^s, y_t; \bd \theta)$.}
    	 \EndFor
 	 \parState{Normalize $\{w_t^s\}_{s=1}^S = \{w_t^s\}_{s=1}^S / \sum_{s=1}^S w_t^s$.}
@@ -523,7 +531,7 @@ is an unbiased estimate of the parameter likelihood $p(\bd y \given \bd \theta)$
    \end{algorithmic}
 \end{algorithm}
 
-There are a variety of algorithms for the resampling step of Line 8.  We use the systematic resampling method.
+There are a variety of algorithms for the resampling step of Line 7.  We use the systematic resampling method.
 
 \noindent A common problem with the BPF is that although its estimate of $p(\bd y \given \bd \theta)$ is unbiased, this approximation may have high variance for certain observation vectors $\bd y$.  The variance can be reduced at the price of increasing the number of particles, yet this often significantly increases computation time and is therefore unsatisfactory.  To remedy our problem, we follow the work of \cite{heng2017controlled} in using controlled sequential Monte Carlo (cSMC) as an alternative to the standard bootstrap particle filter. 
 
@@ -606,6 +614,14 @@ In the aforementioned least-squares optimization problem, there is one additiona
 a_1 > - \frac{1}{2\psi_0}, & & a_t > -\frac{1}{2\psi}, \quad 1 < t \leq T.
 \end{align*}
 
+\subsection{Full cSMC Algorithm}
+The full controlled sequential Monte Carlo algorithm iterates on twisted SMC for $L$ iterations, building a series of policies $\aidx \gamma 1, \aidx \gamma 2, \ldots, \aidx \gamma L$  over time.    
+Given two policies $\Gamma'$ and $\gamma$, we can define
+\begin{align*}
+&h^{\Gamma' \cdot \gamma}(x_1) \propto h^{\Gamma'}(x_1) \gamma_1(x_1) = h(x_1; \bd \theta) \cdot {\Gamma'_1}(x_1) \cdot \gamma_1(x_1), & \\ 
+& f^{\Gamma' \cdot \gamma}_t(x_{t-1}, x_{t}; \bd \theta) \propto f^{\Gamma'}_t(x_{t-1}, x_t; \bd \theta) \cdot \gamma_t(x_t) = f(x_{t-1}, x_t; \bd \theta) \cdot \Gamma'_t(x_t) \cdot \gamma_t(x_t), & & 1 < t \leq T.
+\end{align*}
+We can see from these relationships that twisting the original model using $\Gamma'$ and then twisting the new model using $\gamma$ has the same effect as twisting the original model using a cumulative policy $\Gamma$ where each $\Gamma_t(x_t) = \Gamma'_t(x_t) \cdot \gamma_t(x_t)$.  We state the full cSMC algorithm in Algorithm \ref{csmc}.
 
 \begin{algorithm}[H]
 \caption{\texttt{ControlledSMC}($\bd y$, $g$, $\mu$, $\psi$, $x_0$, $\psi_0$, $L$)} \label{csmc}
@@ -644,7 +660,7 @@ a_1 > - \frac{1}{2\psi_0}, & & a_t > -\frac{1}{2\psi}, \quad 1 < t \leq T.
     \parState{Normalize $\{w_1^s\}_{s=1}^S = \{w_1^s\}_{s=1}^S / \sum_{s=1}^S w_1^s$.}
     \For{$t = 2, \ldots, T$}
     	\For{$s = 1, \ldots, S$}
-		\parState{Resample ancestor index $a \sim \text{$\mathcal{C}$ategorical}(w_{t-1}^1, \ldots, w_{t-1}^S)$.}
+		\parState{Resample ancestor index $a \sim$ Categorical$(w_{t-1}^1, \ldots, w_{t-1}^S)$.}
     		\parState{Sample $x_t^s \sim f_t^\Gamma(x^a_{t-1}, x_t; \bd \theta)$ and weight $w_t^s = g^\Gamma_t(x_t^s, y_t)$.}
    	 \EndFor
 	 \parState{Normalize $\{w_t^s\}_{s=1}^S = \{w_t^s\}_{s=1}^S / \sum_{s=1}^S w_t^s$.}
@@ -655,14 +671,14 @@ a_1 > - \frac{1}{2\psi_0}, & & a_t > -\frac{1}{2\psi}, \quad 1 < t \leq T.
    \end{algorithmic}
 \end{algorithm}
 
-\subsection{Full cSMC Algorithm}
-The full controlled sequential Monte Carlo algorithm iterates on twisted SMC for $L$ iterations, building a series of policies $\aidx \gamma 1, \aidx \gamma 2, \ldots, \aidx \gamma L$  over time.    
-Given two policies $\Gamma'$ and $\gamma$, we can define
-\begin{align*}
-&h^{\Gamma' \cdot \gamma}(x_1) \propto h^{\Gamma'}(x_1) \gamma_1(x_1) = h(x_1; \bd \theta) \cdot {\Gamma'_1}(x_1) \cdot \gamma_1(x_1), & \\ 
-& f^{\Gamma' \cdot \gamma}_t(x_{t-1}, x_{t}; \bd \theta) \propto f^{\Gamma'}_t(x_{t-1}, x_t; \bd \theta) \cdot \gamma_t(x_t) = f(x_{t-1}, x_t; \bd \theta) \cdot \Gamma'_t(x_t) \cdot \gamma_t(x_t), & & 1 < t \leq T.
-\end{align*}
-We can see from these relationships that twisting the original model using $\Gamma'$ and then twisting the new model using $\gamma$ has the same effect as twisting the original model using a cumulative policy $\Gamma$ where each $\Gamma_t(x_t) = \Gamma'_t(x_t) \cdot \gamma_t(x_t)$.  We state the full cSMC algorithm in Algorithm \ref{csmc}.
+\section{MULTIPLE GIBBS SAMPLES WITH OPTIMAL CO-OCCURENCE MATRIX} \label{mult-co}
+This section extends the method of selecting clusters detailed in Section \ref{ssec:sel-clust}.  After running the DPnSSM inference algorithm (Alogrithm \ref{alg}), we construct co-occurrence matrices $\baidx \Omega i$  for $i = 1, \ldots, I$ (Equation \ref{co-occurrence}).  Then, we select the optimal Gibbs sample $i^*$.  If there are $J > 1$ Gibbs samples $i_1, \ldots, i_J$ such that $\baidx \Omega {i_j} = \baidx \Omega {i^*}$ for $j = 1, \ldots, J$, our final cluster parameters $\bd \Theta^*$ can be redefined as the average among the corresponding parameter samples,
+\begin{align} \label{final-params}
+\bd \Theta^* = \frac{1}{J} \sum_{j=1}^J \baidx \Theta {i_j} \approx \E[\bd \Theta \given Z = Z^*].
+\end{align}
+This averaging must be proceeded by a permutation of each set of $\bidx \theta 1, \ldots, \bidx \theta K \in \baidx \Theta {i_j^*}$ to fix any potential label switching.     
+
+\section{ROBUSTNESS OF MODEL TO STIMULUS MISSPECIFICATION} \label{sim-robust}
 
 \section{ADDITIONAL RASTER PLOTS FOR CUE DATA OVER TIME} \label{raster-plots}
 \begin{figure}[h]
@@ -672,8 +688,11 @@ We can see from these relationships that twisting the original model using $\Gam
 \includegraphics[scale=0.5]{../img/cue-raster-appc.pdf}
 \end{center}
 \vspace{-4mm}
-\caption{Overlaid raster plots of neuronal clusters found in Section \ref{cue-cluster} for (a) cluster $k =2$ with eight neurons, (b) cluster $k = 4$ with four neurons, and (c) cluster $k = 2$ with a single neuron.  A black dot at $(\tau, r)$ indicates a spike from one of the neurons in the corresponding cluster at time $\tau$ during trial $r$. The vertical green line indicates cue onset.} \label{cue-rasters}
+\caption{Overlaid raster plots of additional neuronal clusters found in Section \ref{cue-cluster} for (a) cluster $k =2$ with eight neurons, (b) cluster $k = 4$ with four neurons, and (c) cluster $k = 2$ with a single neuron.  A black dot at $(\tau, r)$ indicates a spike from one of the neurons in the corresponding cluster at time $\tau$ during trial $r$. The vertical green line indicates cue onset.} \label{cue-rasters}
 \end{figure}
+
+\section{DETAILS OF CSMC VS. BPF EXPERIMENT} \label{csmc-bpf-app}
+This section describes the experimental setup of Section \ref{ssec:bpf-csmc} that is used to produce Figure \ref{bpf-csmc}.  Computational cost is fixed at approximately 35 milliseconds per likelihood evaluation for either method.  For the bootstrap particle filter (BPF), we use $S = 1024$ particles.  For controlled sequential Monte Carlo (cSMC), we use $S = 64$ particles and $L = 3$ iterations.  All parameter log-likelihood evaluations are performed on a representative real neuron's cue data over time $\bd y$, as described in Section \ref{sssec:time-data}.  For each particle filtering method, let $v(\mu, \psi) = \Var[\log p(\bd y \given \bd \theta)]$, where $\bd \theta = [\mu, \log \psi]^\top$.  Figure \ref{bpf-csmc} plots an empirical estimation of $v$, i.e. $\hat{v}$, over different values of $(\mu, \psi)$ for the two methods.  For each empirical variance data point, we use 500 estimations of $\log p(\bd y \given \bd \theta)$.  As $\log \psi$ decreases, cSMC performs substantially better than BPF, especially for extreme values of $\mu$.  
 
 
 \end{document}

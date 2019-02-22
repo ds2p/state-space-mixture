@@ -10,49 +10,49 @@ Allsop, S.~A., Wichmann, R., Mills, F., Burgos-Robles, A., Chang, C.-J.,
 
 \bibitem[Andrieu et~al., 2010]{andrieu2010particle}
 Andrieu, C., Doucet, A., and Holenstein, R. (2010).
-\newblock Particle markov chain monte carlo methods.
+\newblock Particle {M}arkov chain {M}onte {C}arlo methods.
 \newblock {\em Journal of the Royal Statistical Society: Series B (Statistical
   Methodology)}, 72(3):269--342.
 
 \bibitem[Bauwens and Rombouts, 2007]{bauwens2007bayesian}
 Bauwens, L. and Rombouts, J. (2007).
-\newblock Bayesian clustering of many garch models.
+\newblock Bayesian clustering of many {GARCH} models.
 \newblock {\em Econometric Reviews}, 26(2-4):365--386.
 
 \bibitem[Brown et~al., 2004]{brown2004multiple}
 Brown, E.~N., Kass, R.~E., and Mitra, P.~P. (2004).
 \newblock Multiple neural spike train data analysis: state-of-the-art and
   future challenges.
-\newblock {\em Nature neuroscience}, 7(5):456.
+\newblock {\em Nature Neuroscience}, 7(5):456.
 
 \bibitem[Chiappa and Barber, 2007]{chiappa2007output}
 Chiappa, S. and Barber, D. (2007).
-\newblock Output grouping using dirichlet mixtures of linear gaussian
+\newblock Output grouping using {D}irichlet mixtures of linear {G}aussian
   state-space models.
 \newblock In {\em Image and Signal Processing and Analysis, 2007. ISPA 2007.
   5th International Symposium on}, pages 446--451. IEEE.
 
 \bibitem[Dahl, 2006]{dahl2006model}
 Dahl, D.~B. (2006).
-\newblock Model-based clustering for expression data via a dirichlet process
+\newblock Model-based clustering for expression data via a {D}irichlet process
   mixture model.
-\newblock {\em Bayesian inference for gene expression and proteomics}, 201:218.
+\newblock {\em Bayesian Inference for Gene Expression and Proteomics}, 201:218.
 
 \bibitem[Doucet et~al., 2001]{doucet2001introduction}
 Doucet, A., De~Freitas, N., and Gordon, N. (2001).
-\newblock An introduction to sequential monte carlo methods.
-\newblock In {\em Sequential Monte Carlo methods in practice}, pages 3--14.
+\newblock An introduction to sequential {M}onte {C}arlo methods.
+\newblock In {\em Sequential Monte Carlo Methods in Practice}, pages 3--14.
   Springer.
 
 \bibitem[Durbin and Koopman, 2012]{durbin2012time}
 Durbin, J. and Koopman, S.~J. (2012).
-\newblock {\em Time series analysis by state space methods}, volume~38.
+\newblock {\em Time Series Analysis by State Space Methods}, volume~38.
 \newblock Oxford University Press.
 
 \bibitem[Ferguson, 1973]{ferguson1973bayesian}
 Ferguson, T.~S. (1973).
-\newblock A bayesian analysis of some nonparametric problems.
-\newblock {\em The annals of statistics}, pages 209--230.
+\newblock A {B}ayesian analysis of some nonparametric problems.
+\newblock {\em The Annals of Statistics}, 1(2):209--230.
 
 \bibitem[Guarniero et~al., 2017]{guarniero2017iterated}
 Guarniero, P., Johansen, A.~M., and Lee, A. (2017).
@@ -62,7 +62,7 @@ Guarniero, P., Johansen, A.~M., and Lee, A. (2017).
 
 \bibitem[Heng et~al., 2017]{heng2017controlled}
 Heng, J., Bishop, A.~N., Deligiannidis, G., and Doucet, A. (2017).
-\newblock Controlled sequential monte carlo.
+\newblock Controlled sequential {M}onte {C}arlo.
 \newblock {\em arXiv preprint arXiv:1708.08396}.
 
 \bibitem[Humphries, 2011]{humphries2011spike}
@@ -77,19 +77,19 @@ Inoue, L.~Y., Neira, M., Nelson, C., Gleave, M., and Etzioni, R. (2006).
 
 \bibitem[Middleton, 2014]{middleton2014}
 Middleton, L. (2014).
-\newblock Clustering time series: a dirichlet process mixture of
-  linear-gaussian state-space models.
+\newblock Clustering time series: a {D}irichlet process mixture of
+  linear-{G}aussian state-space models.
 \newblock Master's thesis, Oxford University, United Kingdom.
 
 \bibitem[Neal, 2000]{neal2000markov}
 Neal, R.~M. (2000).
-\newblock Markov chain sampling methods for dirichlet process mixture models.
-\newblock {\em Journal of computational and graphical statistics},
+\newblock Markov chain sampling methods for {D}irichlet process mixture models.
+\newblock {\em Journal of Computational and Graphical Statistics},
   9(2):249--265.
 
-\bibitem[Nieto-Barajas et~al., 2014]{nieto2014bayesian}
-Nieto-Barajas, L.~E., Contreras-Crist{\'a}n, A., et~al. (2014).
-\newblock A bayesian nonparametric approach for time series clustering.
+\bibitem[Nieto-Barajas and Contreras-Crist{\'a}n, 2014]{nieto2014bayesian}
+Nieto-Barajas, L.~E. and Contreras-Crist{\'a}n, A. (2014).
+\newblock A {B}ayesian nonparametric approach for time series clustering.
 \newblock {\em Bayesian Analysis}, 9(1):147--170.
 
 \bibitem[Roick et~al., 2019]{roick2019clustering}
