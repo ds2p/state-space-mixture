@@ -1,0 +1,125 @@
+\begin{thebibliography}{}
+
+\bibitem[Allsop et~al., 2018]{allsop2018corticoamygdala}
+Allsop, S.~A., Wichmann, R., Mills, F., Burgos-Robles, A., Chang, C.-J.,
+  Felix-Ortiz, A.~C., Vienne, A., Beyeler, A., Izadmehr, E.~M., Glober, G.,
+  et~al. (2018).
+\newblock Corticoamygdala transfer of socially derived information gates
+  observational learning.
+\newblock {\em Cell}, 173(6):1329--1342.
+
+\bibitem[Andrieu et~al., 2010]{andrieu2010particle}
+Andrieu, C., Doucet, A., and Holenstein, R. (2010).
+\newblock Particle markov chain monte carlo methods.
+\newblock {\em Journal of the Royal Statistical Society: Series B (Statistical
+  Methodology)}, 72(3):269--342.
+
+\bibitem[Bauwens and Rombouts, 2007]{bauwens2007bayesian}
+Bauwens, L. and Rombouts, J. (2007).
+\newblock Bayesian clustering of many garch models.
+\newblock {\em Econometric Reviews}, 26(2-4):365--386.
+
+\bibitem[Brown et~al., 2004]{brown2004multiple}
+Brown, E.~N., Kass, R.~E., and Mitra, P.~P. (2004).
+\newblock Multiple neural spike train data analysis: state-of-the-art and
+  future challenges.
+\newblock {\em Nature neuroscience}, 7(5):456.
+
+\bibitem[Chiappa and Barber, 2007]{chiappa2007output}
+Chiappa, S. and Barber, D. (2007).
+\newblock Output grouping using dirichlet mixtures of linear gaussian
+  state-space models.
+\newblock In {\em Image and Signal Processing and Analysis, 2007. ISPA 2007.
+  5th International Symposium on}, pages 446--451. IEEE.
+
+\bibitem[Dahl, 2006]{dahl2006model}
+Dahl, D.~B. (2006).
+\newblock Model-based clustering for expression data via a dirichlet process
+  mixture model.
+\newblock {\em Bayesian inference for gene expression and proteomics}, 201:218.
+
+\bibitem[Doucet et~al., 2001]{doucet2001introduction}
+Doucet, A., De~Freitas, N., and Gordon, N. (2001).
+\newblock An introduction to sequential monte carlo methods.
+\newblock In {\em Sequential Monte Carlo methods in practice}, pages 3--14.
+  Springer.
+
+\bibitem[Durbin and Koopman, 2012]{durbin2012time}
+Durbin, J. and Koopman, S.~J. (2012).
+\newblock {\em Time series analysis by state space methods}, volume~38.
+\newblock Oxford University Press.
+
+\bibitem[Ferguson, 1973]{ferguson1973bayesian}
+Ferguson, T.~S. (1973).
+\newblock A bayesian analysis of some nonparametric problems.
+\newblock {\em The annals of statistics}, pages 209--230.
+
+\bibitem[Guarniero et~al., 2017]{guarniero2017iterated}
+Guarniero, P., Johansen, A.~M., and Lee, A. (2017).
+\newblock The iterated auxiliary particle filter.
+\newblock {\em Journal of the American Statistical Association},
+  112(520):1636--1647.
+
+\bibitem[Heng et~al., 2017]{heng2017controlled}
+Heng, J., Bishop, A.~N., Deligiannidis, G., and Doucet, A. (2017).
+\newblock Controlled sequential monte carlo.
+\newblock {\em arXiv preprint arXiv:1708.08396}.
+
+\bibitem[Humphries, 2011]{humphries2011spike}
+Humphries, M.~D. (2011).
+\newblock Spike-train communities: finding groups of similar spike trains.
+\newblock {\em Journal of Neuroscience}, 31(6):2321--2336.
+
+\bibitem[Inoue et~al., 2006]{inoue2006cluster}
+Inoue, L.~Y., Neira, M., Nelson, C., Gleave, M., and Etzioni, R. (2006).
+\newblock Cluster-based network model for time-course gene expression data.
+\newblock {\em Biostatistics}, 8(3):507--525.
+
+\bibitem[Middleton, 2014]{middleton2014}
+Middleton, L. (2014).
+\newblock Clustering time series: a dirichlet process mixture of
+  linear-gaussian state-space models.
+\newblock Master's thesis, Oxford University, United Kingdom.
+
+\bibitem[Neal, 2000]{neal2000markov}
+Neal, R.~M. (2000).
+\newblock Markov chain sampling methods for dirichlet process mixture models.
+\newblock {\em Journal of computational and graphical statistics},
+  9(2):249--265.
+
+\bibitem[Nieto-Barajas et~al., 2014]{nieto2014bayesian}
+Nieto-Barajas, L.~E., Contreras-Crist{\'a}n, A., et~al. (2014).
+\newblock A bayesian nonparametric approach for time series clustering.
+\newblock {\em Bayesian Analysis}, 9(1):147--170.
+
+\bibitem[Roick et~al., 2019]{roick2019clustering}
+Roick, T., Karlis, D., and McNicholas, P.~D. (2019).
+\newblock Clustering discrete valued time series.
+\newblock {\em arXiv preprint arXiv:1901.09249}.
+
+\bibitem[Saad and Mansinghka, 2018]{saad2018temporally}
+Saad, F. and Mansinghka, V. (2018).
+\newblock Temporally-reweighted chinese restaurant process mixtures for
+  clustering, imputing, and forecasting multivariate time series.
+\newblock In {\em International Conference on Artificial Intelligence and
+  Statistics}, pages 755--764.
+
+\bibitem[Smith and Brown, 2003]{smith2003estimating}
+Smith, A.~C. and Brown, E.~N. (2003).
+\newblock Estimating a state-space model from point process observations.
+\newblock {\em Neural computation}, 15(5):965--991.
+
+\bibitem[St~Hilaire et~al., 2017]{st2017modeling}
+St~Hilaire, M.~A., R{\"u}ger, M., Fratelli, F., Hull, J.~T., Phillips, A.~J.,
+  and Lockley, S.~W. (2017).
+\newblock Modeling neurocognitive decline and recovery during repeated cycles
+  of extended sleep and chronic sleep deficiency.
+\newblock {\em Sleep}, 40(1).
+
+\bibitem[Vere-Jones, 2003]{vere2003introduction}
+Vere-Jones, D. (2003).
+\newblock {\em An Introduction to the Theory of Point Processes: Volume I:
+  Elementary Theory and Methods}.
+\newblock Springer.
+
+\end{thebibliography}

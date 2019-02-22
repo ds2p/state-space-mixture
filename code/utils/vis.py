@@ -4,7 +4,9 @@ from scipy.cluster.hierarchy import dendrogram, linkage
 from seaborn import heatmap
 import seaborn as sns
 from sklearn.metrics.pairwise import pairwise_distances
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 
 sns.reset_orig()
 
@@ -38,17 +40,29 @@ def vis_heatmap(cluster_ids, show_dendrogram=False):
     Z = linkage(sim_mat.values, 'ward')
     dn = dendrogram(Z, no_plot=~show_dendrogram)
     new_idx = np.array(dn['ivl'], dtype='int')
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
+    fig, ax = plt.subplots(1, 1, figsize=(8.5, 6.5))
     
     # Find Gibbs sample that best matches similarity matrix
     sim_mat_dists = np.array([np.mean((x - sim_mat.values) ** 2) for x in all_sim_mats])
     best_gibbs = np.argmin(sim_mat_dists)
     new_idx = np.argsort(cluster_ids[best_gibbs])
-    heatmap(sim_mat.loc[new_idx, new_idx], ax=ax1, cmap='coolwarm')
-    heatmap(pd.DataFrame(all_sim_mats[best_gibbs]).loc[new_idx, new_idx], ax=ax2, cmap='coolwarm')
-    all_best_gibbs = np.where([np.array_equal(cluster_ids[best_gibbs], x) for x in cluster_ids])[0]
-    plt.show()
+    heatmap(sim_mat.loc[new_idx, new_idx], ax=ax, cmap='coolwarm')
     
+    # Add chosen clustering in outline
+    counts = np.bincount(cluster_ids[best_gibbs])
+    N = len(new_idx)
+    start = 0
+    for c in counts:
+        rect = patches.Rectangle((start, N-start), c, -c, linewidth=5, edgecolor='lime', facecolor='none')
+        start += c
+        ax.add_patch(rect)
+    ax.set_xlim([-.25, N+.25])
+    ax.set_ylim([-.25, N+.25])
+    plt.xticks(rotation=90)
+    plt.yticks(rotation=0)
+    plt.tight_layout()
+    
+    all_best_gibbs = np.where([np.array_equal(cluster_ids[best_gibbs], x) for x in cluster_ids])[0]
     return sim_mat, all_best_gibbs, all_sim_mats
 
 def plot_raster(raster, x_axis=None, ax=None, ms=10, offset=0):
@@ -62,3 +76,26 @@ def plot_raster(raster, x_axis=None, ax=None, ms=10, offset=0):
             ax.plot(x_axis[mask], (i+1+offset) * np.ones(mask.sum()), 'k.', markersize=ms)
         else:
             plt.plot(x_axis[mask], (i+1+offset) * np.ones(mask.sum()), 'k.', markersize=ms)
+
+def import_camera_ready_settings(text_font=16, number_font=14):
+    sns.set_style("whitegrid")
+    sns.set_context("poster")
+    pgf_with_latex = {                      # setup matplotlib to use latex for output
+        "pgf.texsystem": "pdflatex",        # change this if using xetex or lautex
+        "text.usetex": True,                # use LaTeX to write all text
+        "font.family": "serif",
+        "font.serif": [],                   # blank entries should cause plots to inherit fonts from the document
+        "font.sans-serif": [],
+        "font.monospace": [],
+        "axes.labelsize": text_font,               # LaTeX default is 10pt font.
+        "axes.titlesize": text_font,
+        "font.size": text_font,
+        "legend.fontsize": text_font,               # Make the legend/label fonts a little smaller
+        "xtick.labelsize": number_font,
+        "ytick.labelsize": number_font,
+        "pgf.preamble": [
+        r"\usepackage[utf8x]{inputenc}",    # use utf8 fonts becasue your computer can handle it :)
+        r"\usepackage[T1]{fontenc}",        # plots will be generated using this preamble
+                ]
+            }
+    mpl.rcParams.update(pgf_with_latex)
