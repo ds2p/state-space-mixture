@@ -456,7 +456,7 @@ In future work, we plan to perform detailed analyses of the data from these expe
 
 \newpage
 \subsubsection*{Acknowledgements}
-The authors thank Amazon Web Services (AWS) for the assistance of computational power in running experiments for this paper.  Demba Ba thanks the Harvard Data Science Initiative.  Pierre E. Jacob thanks the Harvard Data Science Initiative and the National Science Foundation (Grant DMS-1712872).  Kay M. Tye thanks the McKnight Foundation, NIH (Grant R01-MH102441-01), and NCCIH (Pioneer Award DP1-AT009925).
+Demba Ba thanks Amazon Web Services (AWS), for their generous support and access to computational resources, and the Harvard Data Science Initiative for their support.  Pierre E. Jacob thanks the Harvard Data Science Initiative and the National Science Foundation (Grant DMS-1712872).  Kay M. Tye thanks the McKnight Foundation, NIH (Grant R01-MH102441-01), and NCCIH (Pioneer Award DP1-AT009925).
 
 \bibliography{aistats}
 
@@ -593,9 +593,9 @@ We want to find the values of $(a_t, b_t, c_t)$ that enforce $\gamma_t \approx \
 \end{align*}
 Also note that in a slight abuse of notation, we redefine for all $t < T$,
 \begin{align*}
-\gamma_t^*(x_t) = g(x_t, y_t) \cdot F^\gamma_{t+1}(x_t; \bd \theta_t), 
+\gamma_t^*(x_t) = g(x_t, y_t) \cdot F^\gamma_{t+1}(x_t; \bd \theta), 
 \end{align*}
-because when performing approximate backwards recursion, it is not possible to analytically solve for the intractable integral $F^{\gamma*}_{t+1}(x_t; \bd \theta_t)$.    
+because when performing approximate backwards recursion, it is not possible to analytically solve for the intractable integral $F^{\gamma*}_{t+1}(x_t; \bd \theta)$.    
 
 In the aforementioned least-squares optimization problem, there is one additional constraint that we must take into account.  Recall that $f_t^{\gamma}(x_{t-1}, x_t; \bd \theta) \propto f(x_{t-1}, x_t; \bd \theta) \cdot \gamma_t(x_t)$ is a Gaussian pdf that we sample from.  Therefore, we must ensure that the variance of this distribution is positive, which places a constraint on $\gamma_t$ and more specifically, the domain of $(a_t, b_t, c_t)$.  Using properties of Gaussians, we can perform algebraic manipulation to work out the following parameterizations of $h^\gamma$ and $f_t^\gamma$:
 \begin{align*}
@@ -676,7 +676,7 @@ This section extends the method of selecting clusters detailed in Section \ref{s
 \begin{align} \label{final-params}
 \bd \Theta^* = \frac{1}{J} \sum_{j=1}^J \baidx \Theta {i_j} \approx \E[\bd \Theta \given Z = Z^*].
 \end{align}
-This averaging must be proceeded by a permutation of each set of $\bidx \theta 1, \ldots, \bidx \theta K \in \baidx \Theta {i_j^*}$ to fix any potential label switching.     
+This averaging must be preceded by a permutation of each set of $\bidx \theta 1, \ldots, \bidx \theta K \in \baidx \Theta {i_j^*}$ to fix any potential label switching.     
 
 \section{ROBUSTNESS OF MODEL TO STIMULUS MISSPECIFICATION} \label{sim-robust}
 
