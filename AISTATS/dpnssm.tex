@@ -186,7 +186,7 @@ To sample from the conditional posterior of parameters given cluster assignments
 We use an approach that obviates the need to re-introduce the state sequence and generalizes to scenarios where the prior on parameter and the state sequence may not have any conjugacy relationships. In particular, our sampler uses a Metropolis-Hastings step with proposal distribution $r(\bd \theta' \given \bd \theta)$ to sample from the class conditional distribution of parameters given cluster assignments. This effectively becomes one iteration of the well-known particle marginal Metropolis-Hastings (PMMH) algorithm \citep{andrieu2010particle}.  To evaluate the second term of Equation \ref{clust-param} for PMMH, we once again choose to use cSMC (Section \ref{ssec:csmc}).   
 
 \subsection{Controlled Sequential Monte Carlo} \label{ssec:csmc}
-Controlled SMC is based on the idea that we can modify a state-space model in such a way that standard bootstrap particle filters \citep{doucet2001introduction} give lower variance estimates while the likelihood of interest is kept unchanged. More precisely, the algorithm introduces a collection of positive and bounded functions $\gamma = \{\gamma_1, \ldots, \gamma_T\}$, termed a policy, that alter the transition densities of the model in the following way,
+Controlled SMC is based on the idea that we can modify a state-space model in such a way that standard bootstrap particle filters \citep{doucet2001introduction} give lower variance estimates while the likelihood of interest is kept unchanged. More precisely, the algorithm introduces a collection of positive and bounded functions $\gamma = \{\gamma_1, \ldots, \gamma_T\}$, termed a policy, that alter the transition densities of the model in the following way:
 \begin{align}
 h^\gamma(x_1; \bd \theta) &\propto h(x_1; \bd \theta) \cdot \gamma_1(x_1), \\
 f^\gamma_t(x_{t-1}, x_{t}; \bd \theta) &\propto f(x_{t-1}, x_t; \bd \theta) \cdot \gamma_t(x_t), & 1 < t. \nonumber
@@ -254,7 +254,7 @@ We conduct a simulated experiment to test the ability of the DPnSSM to yield des
 \subsubsection{Data Generation} \label{sssec:sim-data}
 We simulate $N = 25$ neuronal rasters that each record data for $R = 45$ trials over the time interval $(-500, \mathcal{T}]$ milliseconds (ms) before/after an exogenous stimulus is applied at 0 ms, where $\mathcal{T} = 1500$.  For each trial, the resolution of the binary event sequence is $\delta = 1$ ms.  We create bins of size  $\Delta =  M \cdot \delta$, where $M = 5$, and observe neuron $n$ firing $\Delta \idx[t, r] N n \leq M$ times during the $t$-th discrete time interval $(t\Delta - \Delta, t\Delta]$ for trial $r$.  
 
-We use the following process for generating the simulated data:  For each neuron $n$, the initial rate is independently drawn as $\idx \lambda n \sim \text{Uniform}(10, 15)$ Hz.  Each neuron's \emph{type} is determined by the evolution of its discrete-time CIF  $\idx[t] \lambda n $ over time.  We split the discrete-time intervals into three parts -- $\bd t_1 = \{-99, \ldots, 0\}$, $\bd t_2 = \{1, \ldots, 50\}$, and $\bd t_3 = \{51, \ldots, 300\}$.  We generate five neurons each of the following five types: 
+We use the following process for generating the simulated data:  For each neuron $n$, the initial rate is independently drawn as $\idx \lambda n \sim \text{Uniform}(10, 15)$ Hz.  Each neuron's \emph{type} is determined by the evolution of its discrete-time CIF  $\idx[t] \lambda n $ over time.  We split the discrete-time intervals into three parts -- $\bd t_1 = \{-99, \ldots, 0\}$, $\bd t_2 = \{1, \ldots, 50\}$, and $\bd t_3 = \{51, \ldots, 300\}$. We generate five neurons from each of the following five types: 
 \begin{enumerate}[noitemsep,nolistsep]
 \item \emph{Excited, sustained} neurons with rate $\idx[t] \lambda n = \idx \lambda n$ for $t \in \bd t_1$; rate $\idx[t] \lambda n = \idx \lambda n \cdot \exp(1)$ for $t \in \bd t_2, \bd t_3$.
 \item \emph{Inhibited, sustained} neurons with rate $\idx[t] \lambda n = \idx \lambda n$ for $t \in \bd t_1$; rate $\idx[t] \lambda n = \idx \lambda n \cdot \exp(-1)$ for $t \in \bd t_2, \bd t_3$.
@@ -332,7 +332,7 @@ The algorithm is able to successfully differentiate various types of responses t
 \begin{center}
 \includegraphics[scale=0.3]{../img/cue.pdf}
 \end{center}
-\caption{Heatmap of mean co-occurence matrix for cue data over time and selected clusters (green).} 
+\caption{Heatmap of mean co-occurrence matrix for cue data over time and selected clusters (green).} 
 \label{cue-hm}
 \end{figure}
 
@@ -376,7 +376,7 @@ The corresponding heatmap, representative raster plots, and clustering results c
 \begin{center}
 \includegraphics[scale=0.3]{../img/shock_mod_cue.pdf}
 \end{center}
-\caption{Heatmap of mean co-occurence matrix for cue data over trials and selected clusters (green).} 
+\caption{Heatmap of mean co-occurrence matrix for cue data over trials and selected clusters (green).} 
 \label{shock-hm}
 \end{figure} 
 %-0.37  &  -9.05  & 10& Slightly inhibited, unsustained\\
@@ -475,7 +475,7 @@ Demba Ba thanks Amazon Web Services (AWS), for their generous support and access
 \section{MODEL EXTENSIONS} \label{model-extensions}
 
 \subsection{Multidimensional Time Series}
-Although this paper only considers examples in which each $\idx[t] x n \in \R$ and each $\idx[t] y n$ is one-dimensional, our model and inference algorithm are extendable to cases in which observed time series and/or latent states have multiple dimensions.   For example, as demonstrated in Section 5.2 of \citep{heng2017controlled}, cSMC scales well with a 64-dimensional vector time series model, suggesting that our proposed clustering approach with particle filtering is also applicable to multivariate series. 
+Although this paper only considers examples in which each $\idx[t] x n \in \R$ and each $\idx[t] y n$ is one-dimensional, our model and inference algorithm can be extended to cases in which observed time series and/or latent states have multiple dimensions.   For example, as demonstrated in Section 5.2 of \citep{heng2017controlled}, cSMC scales well with a 64-dimensional vector time series model, suggesting that our proposed clustering approach with particle filtering is also applicable to multivariate series. 
 
 \subsection{Finite Mixture of Time Series}
 It is simple to convert our model into one in which the true number of clusters $K$ is known a priori.  Instead of using a Dirichlet process, we can simply use a Dirichlet($\bd \alpha$) distribution in which $\bd \alpha$ is a $K$-dimensional vector with each $\idx \alpha k > 0$ for $k = 1, \ldots, K$.  Then, we can modify Equation \ref{crp} as:
@@ -667,7 +667,7 @@ We can see from these relationships that twisting the original model using $\Gam
     \EndFor
     \parState{Update $\Gamma' = \Gamma$.}
     \EndFor \\
-    \Return{Likehood estimate $\hat{p}^\Gamma(\bd{y} \given\bd \theta)$.}  
+    \Return{Likelihood estimate $\hat{p}^\Gamma(\bd{y} \given\bd \theta)$.}  
    \end{algorithmic}
 \end{algorithm}
 
@@ -679,7 +679,7 @@ This section extends the method of selecting clusters detailed in Section \ref{s
 This averaging must be preceded by a permutation of each set of $\bidx \theta 1, \ldots, \bidx \theta K \in \baidx \Theta {i_j^*}$ to fix any potential label switching.     
 
 \section{ROBUSTNESS OF MODEL TO STIMULUS MISSPECIFICATION} \label{sim-robust}
-We extend the results of Section \ref{ssec:sim-data} by testing the robustness of the model under cases in which there is a mismatch between the true stimulus time and the model's specification of the stimulus time.  In particular, we first examine the case in which the model overpredicts the true stimulus onset.  Figure \ref{overpredict} presents heatmaps of the mean co-occurrence matrix $\bd \Omega$ in cases in which the model's anticipation of the stimulus falls 40 ms, 80 ms, and 160 ms behind the true onset.  Table \ref{robust-table1} lists the parameters chosen in the final clustering of the data in these three cases.  In all experiments, we use the same data generation process as detailed in Section \ref{sssec:sim-data} and the same modeling process as detailed in Section \ref{sim-model-details}.  
+We extend the results of Section \ref{ssec:sim-data} by testing the robustness of the model under cases in which there is a mismatch between the true stimulus onset and the model's specification of the stimulus onset.  In particular, we first examine the case in which the model overpredicts the true stimulus onset.  Figure \ref{overpredict} presents heatmaps of the mean co-occurrence matrix $\bd \Omega$ in cases in which the model's anticipation of the stimulus falls 40 ms, 80 ms, and 160 ms behind the true onset.  Table \ref{robust-table1} lists the parameters chosen in the final clustering of the data in these three cases.  In all experiments, we use the same data generation process as detailed in Section \ref{sssec:sim-data} and the same modeling process as detailed in Section \ref{sim-model-details}.  
 \begin{figure}[h]
 \begin{center}
 \includegraphics[scale=0.26]{../img/sim_shift8.pdf}
@@ -748,7 +748,7 @@ $5$ &$+0.82$ & $-5.44$ & 5 & & & & $+0.34$ & $-4.96$ & 6
 \end{figure}
 
 \section{DETAILS OF CSMC VS. BPF EXPERIMENT} \label{csmc-bpf-app}
-This section describes the experimental setup of Section \ref{ssec:bpf-csmc} that is used to produce Figure \ref{bpf-csmc}.  Computational cost is fixed at approximately 35 milliseconds per likelihood evaluation for either method.  For the bootstrap particle filter (BPF), we use $S = 1024$ particles.  For controlled sequential Monte Carlo (cSMC), we use $S = 64$ particles and $L = 3$ iterations.  All parameter log-likelihood evaluations are performed on a representative real neuron's cue data over time $\bd y$, as described in Section \ref{sssec:time-data}.  For each particle filtering method, let $v(\mu, \psi) = \Var[\log p(\bd y \given \bd \theta)]$, where $\bd \theta = [\mu, \log \psi]^\top$.  Figure \ref{bpf-csmc} plots an empirical estimation of $v$, i.e. $\hat{v}$, over different values of $(\mu, \psi)$ for the two methods.  For each empirical variance data point, we use 500 estimations of $\log p(\bd y \given \bd \theta)$.  As $\log \psi$ decreases, cSMC performs substantially better than BPF, especially for extreme values of $\mu$.  
+This section describes the experimental setup of Section \ref{ssec:bpf-csmc} that is used to produce Figure \ref{bpf-csmc}.  Computational cost is fixed at approximately 35 milliseconds per likelihood evaluation for either method.  For the bootstrap particle filter (BPF), we use $S = 1024$ particles.  For controlled sequential Monte Carlo (cSMC), we use $S = 64$ particles and $L = 3$ iterations.  All parameter log-likelihood evaluations are performed on a representative real neuron's cue data over time $\bd y$, as described in Section \ref{sssec:time-data}.  For each particle filtering method, let $v(\mu, \psi) = \Var[\log p(\bd y \given \bd \theta)]$, where $\bd \theta = [\mu, \log \psi]^\top$.  Figure \ref{bpf-csmc} plots empirical estimates of $\hat{v}$ of $v$ over different values of $(\mu, \psi)$ for the two methods.  For each empirical variance estimate, we use 500 estimates of $\log p(\bd y \given \bd \theta)$.  As $\log \psi$ decreases, cSMC performs substantially better than BPF, especially for extreme values of $\mu$.  
 
 
 \end{document}
