@@ -248,7 +248,7 @@ Each Gibbs sample describes a clustering of the time series; we therefore frame 
 This is simply a matrix in which the $(n, n')$ entry is 1 if series $n$ and series $n'$ are in the same cluster for the $i$-th Gibbs sample and 0 otherwise.  {We then define {$\bd \Omega = (I-B)^{-1} \sum_{i=B+1}^I \baidx \Omega i$}} as the mean co-occurrence matrix, where $B \geq 1$ is the number of pre-burn-in samples.  This matrix summarizes information from the entire trace of Gibbs samples.  The sample $i^*$ that we ultimately select is the one that minimizes the Frobenius distance to this matrix, i.e. $i^* = \arg \min_{i} \norm{\baidx \Omega i - \bd \Omega}_F$.
 We use the corresponding assignments and parameters as the final  clustering $(Z^*, \bd \Theta^*) = (\aidx Z {i^*}, \baidx \Theta {i^*})$.  The appeal of this procedure is that it makes use of global information from all the Gibbs samples, yet ultimately selects a single clustering produced by the model.  If there are multiple Gibbs samples $i_1, \ldots, i_J$ such that $\baidx \Omega {i^*} = \baidx \Omega {i_1} = \ldots = \baidx \Omega {i_J}$, then we redefine $\bd \Theta^*$ as a simple average, as explained in \textbf{Appendix \ref{mult-co}}.     
 
-\subsection{Simulated Neural Spiking Data}
+\subsection{Simulated Neural Spiking Data} \label{ssec:sim-data}
 We conduct a simulated experiment to test the ability of the DPnSSM to yield desired results in a setting in which the ground truth clustering is known. 
 
 \subsubsection{Data Generation} \label{sssec:sim-data}
@@ -536,7 +536,7 @@ There are a variety of algorithms for the resampling step of Line 7.  We use the
 \noindent A common problem with the BPF is that although its estimate of $p(\bd y \given \bd \theta)$ is unbiased, this approximation may have high variance for certain observation vectors $\bd y$.  The variance can be reduced at the price of increasing the number of particles, yet this often significantly increases computation time and is therefore unsatisfactory.  To remedy our problem, we follow the work of \cite{heng2017controlled} in using controlled sequential Monte Carlo (cSMC) as an alternative to the standard bootstrap particle filter. 
 
 \subsection{Twisted Sequential Monte Carlo}
-The basic idea of cSMC is to run several iterations of twisted sequential Monte Carlo, a process in which we redefine the model's state transition function $f$, initial prior $h$, and state-dependent likelihood $g$ in a way that allows the BPF to produce lower-variance estimates without changing the parameter likelihood $p(\bd y \given \bd \theta)$. See also \cite{guarniero2017iterated} for a different iterative approach. Using a \emph{policy} $\gamma = \{\gamma_1, \ldots, \gamma_T\}$ in which each $\gamma_t$ is a positive and bounded function, we define,
+The basic idea of cSMC is to run several iterations of twisted sequential Monte Carlo, a process in which we redefine the model's state transition density $f$, initial prior $h$, and state-dependent likelihood $g$ in a way that allows the BPF to produce lower-variance estimates without changing the parameter likelihood $p(\bd y \given \bd \theta)$. See also \cite{guarniero2017iterated} for a different iterative approach. Using a \emph{policy} $\gamma = \{\gamma_1, \ldots, \gamma_T\}$ in which each $\gamma_t$ is a positive and bounded function, we define,
 \begin{align*}
 &h^\gamma(x_1; \bd \theta) = \frac{h(x_1; \bd \theta) \cdot \gamma_1(x_1)}{H^\gamma(\bd \theta)}, & & \\
 &f^\gamma_t(x_{t-1}, x_{t}; \bd \theta) = \frac{f(x_{t-1}, x_t; \bd \theta) \cdot \gamma_t(x_t)}{F^\gamma_t(x_{t-1}; \bd \theta)}, & & 1 < t \leq T,
@@ -672,23 +672,79 @@ We can see from these relationships that twisting the original model using $\Gam
 \end{algorithm}
 
 \section{MULTIPLE GIBBS SAMPLES WITH OPTIMAL CO-OCCURENCE MATRIX} \label{mult-co}
-This section extends the method of selecting clusters detailed in Section \ref{ssec:sel-clust}.  After running the DPnSSM inference algorithm (Alogrithm \ref{alg}), we construct co-occurrence matrices $\baidx \Omega i$  for $i = 1, \ldots, I$ (Equation \ref{co-occurrence}).  Then, we select the optimal Gibbs sample $i^*$.  If there are $J > 1$ Gibbs samples $i_1, \ldots, i_J$ such that $\baidx \Omega {i_j} = \baidx \Omega {i^*}$ for $j = 1, \ldots, J$, our final cluster parameters $\bd \Theta^*$ can be redefined as the average among the corresponding parameter samples,
+This section extends the method of selecting clusters detailed in Section \ref{ssec:sel-clust}.  After running the DPnSSM inference algorithm (Algorithm \ref{alg}), we construct co-occurrence matrices $\baidx \Omega i$  for $i = 1, \ldots, I$ (Equation \ref{co-occurrence}).  Then, we select the optimal Gibbs sample $i^*$.  If there are $J > 1$ Gibbs samples $i_1, \ldots, i_J$ such that $\baidx \Omega {i_j} = \baidx \Omega {i^*}$ for $j = 1, \ldots, J$, our final cluster parameters $\bd \Theta^*$ can be redefined as the average among the corresponding parameter samples,
 \begin{align} \label{final-params}
 \bd \Theta^* = \frac{1}{J} \sum_{j=1}^J \baidx \Theta {i_j} \approx \E[\bd \Theta \given Z = Z^*].
 \end{align}
 This averaging must be preceded by a permutation of each set of $\bidx \theta 1, \ldots, \bidx \theta K \in \baidx \Theta {i_j^*}$ to fix any potential label switching.     
 
 \section{ROBUSTNESS OF MODEL TO STIMULUS MISSPECIFICATION} \label{sim-robust}
+We extend the results of Section \ref{ssec:sim-data} by testing the robustness of the model under cases in which there is a mismatch between the true stimulus time and the model's specification of the stimulus time.  In particular, we first examine the case in which the model overpredicts the true stimulus onset.  Figure \ref{overpredict} presents heatmaps of the mean co-occurrence matrix $\bd \Omega$ in cases in which the model's anticipation of the stimulus falls 40 ms, 80 ms, and 160 ms behind the true onset.  Table \ref{robust-table1} lists the parameters chosen in the final clustering of the data in these three cases.  In all experiments, we use the same data generation process as detailed in Section \ref{sssec:sim-data} and the same modeling process as detailed in Section \ref{sim-model-details}.  
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.26]{../img/sim_shift8.pdf}
+\includegraphics[scale=0.26]{../img/sim_shift16.pdf}
+\includegraphics[scale=0.26]{../img/sim_shift32.pdf}
+\end{center}
+\caption{Results from running the DPnSSM inference algorithm in cases in which the model specifies the stimulus as occurring (left) 40 ms, (center) 80 ms, and (right) 160 ms \emph{after} the true onset.  At 40 ms, the ground-truth clustering can be recovered, but this ability decays as the time difference increases.} \label{overpredict}
+\end{figure}
+
+\begin{table}[h]
+\vspace{-3mm}
+\caption{Final cluster parameters for model stimulus delay.  As expected, the absolute value of $\idx {\mu^*} k$ decreases for all $k$ as time mismatch increases.} \label{robust-table1}
+\begin{center}
+\begin{tabular}{c|ccc|ccc|cccl}
+\multicolumn{1}{c}{} &\multicolumn{3}{c}{40 ms model delay} &\multicolumn{3}{c}{80 ms model delay} &\multicolumn{3}{c}{160 ms model delay} \\
+\hline
+$k$ & $\idx {\mu^*} k$ & $\log \idx {\psi^*} k$ &\# of Neurons & $\idx {\mu^*} k$ & $\log \idx {\psi^*} k$ &\# of Neurons & $\idx {\mu^*} k$ & $\log \idx {\psi^*} k$ &\# of Neurons \\
+\hline
+$1$ & $+0.86$ & $-10.86$ & 5 & $+0.80$ & $-10.95$ & 5 & $+0.65$ & $-10.79$ & 5  \\
+$2$ &$-0.88$ & $-12.12$ & 5 & $-0.84$ & $-12.45$ & 5 & $-0.76$ & $-12.48$ & 5 \\
+$3$ &$+0.02$ & $-10.31$  & 5 & $-0.62$ & $-6.23$ & 6 & $+0.01$ & $-9.36$ & 10 \\
+$4$ &$+0.94$ & $-5.53$ & 5 & $+0.05$ & $-10.77$ & 4 & $+0.57$ & $-5.47$ & 5 \\
+$5$ &$-0.87$ & $-5.91$ & 5& $+0.87$ & $-5.52$ & 5 
+\end{tabular}
+\vspace{-4mm}
+\end{center}\end{table}   
+
+Next, we examine the case in which the model underpredicts the true stimulus onset -- by 10 ms, 20 ms, and 40 ms.  This set of results is less robust than the previous one.  Heatmaps are given in Figure \ref{underpredict}, while parameters are given in Table \ref{robust-table2}.  
+\begin{figure}[h]
+\begin{center}
+\includegraphics[scale=0.26]{../img/sim_shift-2.pdf}
+\includegraphics[scale=0.26]{../img/sim_shift-4.pdf}
+\includegraphics[scale=0.26]{../img/sim_shift-8.pdf}
+\end{center}
+\caption{Results from running the DPnSSM inference algorithm in cases in which the model specifies the stimulus as occurring (left) 10 ms, (center) 20 ms, and (right) 40 ms \emph{before} the true onset.  At 10 ms, the ground-truth clustering can almost be fully recovered, but this ability significantly decays as the time difference increases.  For a true stimulus delay of 40 ms, there even exists one cluster containing both excited and inhibited neurons.} \label{underpredict}
+\end{figure}
+
+\begin{table}[h]
+\vspace{-3mm}
+\caption{Final cluster parameters for true stimulus delay.} \label{robust-table2}
+\begin{center}
+\begin{tabular}{c|ccc|ccc|cccl}
+\multicolumn{1}{c}{} &\multicolumn{3}{c}{10 ms stimulus delay} &\multicolumn{3}{c}{20 ms stimulus delay} &\multicolumn{3}{c}{40 ms stimulus delay} \\
+\hline
+$k$ & $\idx {\mu^*} k$ & $\log \idx {\psi^*} k$ &\# of Neurons & $\idx {\mu^*} k$ & $\log \idx {\psi^*} k$ &\# of Neurons & $\idx {\mu^*} k$ & $\log \idx {\psi^*} k$ &\# of Neurons \\
+\hline
+$1$ & $+0.93$ & $-10.45$ & 5 & $+0.91$ & $-10.37$ & 5 & $+0.79$ & $-8.71$ & 5  \\
+$2$ &$-0.90$ & $-12.47$ & 4 & $-0.63$ & $-6.52$ & 10 & $-0.89$ & $-11.5$ & 4 \\
+$3$ &$-0.66$ & $-6.08$  & 6 & $+0.03$ & $-10.02$ & 5 & $-0.34$ & $-5.93$ & 5 \\
+$4$ &$+0.07$ & $-10.96$ & 5 & $+0.67$ & $-5.31$ & 5 & $+0.02$ & $-10.41$ & 5 \\
+$5$ &$+0.82$ & $-5.44$ & 5 & & & & $+0.34$ & $-4.96$ & 6
+\end{tabular}
+\vspace{-4mm}
+\end{center}\end{table}   
+
 
 \section{ADDITIONAL RASTER PLOTS FOR CUE DATA OVER TIME} \label{raster-plots}
-\begin{figure}[h]
+\begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.5]{../img/cue-raster-appa.pdf}
 \includegraphics[scale=0.5]{../img/cue-raster-appb.pdf}
 \includegraphics[scale=0.5]{../img/cue-raster-appc.pdf}
 \end{center}
 \vspace{-4mm}
-\caption{Overlaid raster plots of additional neuronal clusters found in Section \ref{cue-cluster} for (a) cluster $k =2$ with eight neurons, (b) cluster $k = 4$ with four neurons, and (c) cluster $k = 2$ with a single neuron.  A black dot at $(\tau, r)$ indicates a spike from one of the neurons in the corresponding cluster at time $\tau$ during trial $r$. The vertical green line indicates cue onset.} \label{cue-rasters}
+\caption{Overlaid raster plots of additional neuronal clusters found in Section \ref{cue-cluster} for (a) cluster $k =2$ with eight neurons and slightly inhibited/sustained responses, (b) cluster $k = 4$ with four neurons and more strongly inhibited/variable responses, and (c) cluster $k = 2$ with a single neuron and a delayed excited effect.  A black dot at $(\tau, r)$ indicates a spike from one of the neurons in the corresponding cluster at time $\tau$ during trial $r$. The vertical green line indicates cue onset.} \label{cue-rasters}
 \end{figure}
 
 \section{DETAILS OF CSMC VS. BPF EXPERIMENT} \label{csmc-bpf-app}

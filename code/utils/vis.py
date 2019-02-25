@@ -34,7 +34,8 @@ def vis_heatmap(cluster_ids, show_dendrogram=False):
     calc_matching_matrix = lambda x: 1 - (pairwise_distances(x.reshape(-1, 1)) > 0)
     all_sim_mats = [calc_matching_matrix(x) for x in cluster_ids]
     sim_mat = np.mean(all_sim_mats, axis=0)
-    sim_mat = pd.DataFrame(sim_mat)
+    sim_mat = pd.DataFrame(sim_mat, index=np.arange(sim_mat.shape[0])+1, 
+                           columns=np.arange(sim_mat.shape[0])+1)
     
     # Create dendrogram
     Z = linkage(sim_mat.values, 'ward')
@@ -46,7 +47,7 @@ def vis_heatmap(cluster_ids, show_dendrogram=False):
     sim_mat_dists = np.array([np.mean((x - sim_mat.values) ** 2) for x in all_sim_mats])
     best_gibbs = np.argmin(sim_mat_dists)
     new_idx = np.argsort(cluster_ids[best_gibbs])
-    heatmap(sim_mat.loc[new_idx, new_idx], ax=ax, cmap='coolwarm')
+    heatmap(sim_mat.iloc[new_idx, new_idx], ax=ax, cmap='coolwarm')
     
     # Add chosen clustering in outline
     counts = np.bincount(cluster_ids[best_gibbs])
@@ -77,7 +78,7 @@ def plot_raster(raster, x_axis=None, ax=None, ms=10, offset=0):
         else:
             plt.plot(x_axis[mask], (i+1+offset) * np.ones(mask.sum()), 'k.', markersize=ms)
 
-def import_camera_ready_settings(text_font=16, number_font=14):
+def import_camera_ready_settings(text_font=16, number_font=16):
     sns.set_style("whitegrid")
     sns.set_context("poster")
     pgf_with_latex = {                      # setup matplotlib to use latex for output

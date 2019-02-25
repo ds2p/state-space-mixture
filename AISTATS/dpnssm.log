@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  22 FEB 2019 15:53
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.5.24)  24 FEB 2019 22:08
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -626,19 +626,19 @@ File: ../img/cue.pdf Graphic file (type pdf)
 Package pdftex.def Info: ../img/cue.pdf used on input line 333.
 (pdftex.def)             Requested size: 184.28992pt x 140.92758pt.
 
-<../img/cue-raster-a.pdf, id=66, 449.70613pt x 240.24695pt>
+<../img/cue-raster-a.pdf, id=66, 451.66446pt x 242.02475pt>
 File: ../img/cue-raster-a.pdf Graphic file (type pdf)
 
 <use ../img/cue-raster-a.pdf>
 Package pdftex.def Info: ../img/cue-raster-a.pdf used on input line 357.
-(pdftex.def)             Requested size: 202.36588pt x 108.11012pt.
+(pdftex.def)             Requested size: 203.24713pt x 108.91011pt.
 
-<../img/cue-raster-b.pdf, id=67, 449.70613pt x 240.24695pt>
+<../img/cue-raster-b.pdf, id=67, 451.66446pt x 242.02475pt>
 File: ../img/cue-raster-b.pdf Graphic file (type pdf)
 
 <use ../img/cue-raster-b.pdf>
 Package pdftex.def Info: ../img/cue-raster-b.pdf used on input line 358.
-(pdftex.def)             Requested size: 202.36588pt x 108.11012pt.
+(pdftex.def)             Requested size: 203.24713pt x 108.91011pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
@@ -660,21 +660,21 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<../img/shock-mod-cue-raster-a.pdf, id=69, 449.70613pt x 240.24695pt>
+<../img/shock-mod-cue-raster-a.pdf, id=69, 451.66446pt x 242.02475pt>
 File: ../img/shock-mod-cue-raster-a.pdf Graphic file (type pdf)
 
 <use ../img/shock-mod-cue-raster-a.pdf>
 Package pdftex.def Info: ../img/shock-mod-cue-raster-a.pdf used on input line 4
 20.
-(pdftex.def)             Requested size: 202.36588pt x 108.11012pt.
+(pdftex.def)             Requested size: 203.24713pt x 108.91011pt.
 
-<../img/shock-mod-cue-raster-b.pdf, id=70, 449.70613pt x 240.24695pt>
+<../img/shock-mod-cue-raster-b.pdf, id=70, 451.66446pt x 242.02475pt>
 File: ../img/shock-mod-cue-raster-b.pdf Graphic file (type pdf)
 
 <use ../img/shock-mod-cue-raster-b.pdf>
 Package pdftex.def Info: ../img/shock-mod-cue-raster-b.pdf used on input line 4
 21.
-(pdftex.def)             Requested size: 202.36588pt x 108.11012pt.
+(pdftex.def)             Requested size: 203.24713pt x 108.91011pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
@@ -689,12 +689,12 @@ single page
 pdfTeX warning: /usr/local/texlive/2015/bin/x86_64-darwin/pdflatex (file ../img
 /cue-raster-b.pdf): PDF inclusion: multiple pdfs with page group included in a 
 single page
->] <../img/bpf-vs-csmc.pdf, id=924, 485.6544pt x 304.9794pt>
+>] <../img/bpf-vs-csmc.pdf, id=924, 479.56187pt x 304.9794pt>
 File: ../img/bpf-vs-csmc.pdf Graphic file (type pdf)
 
 <use ../img/bpf-vs-csmc.pdf>
 Package pdftex.def Info: ../img/bpf-vs-csmc.pdf used on input line 446.
-(pdftex.def)             Requested size: 203.97345pt x 128.09047pt.
+(pdftex.def)             Requested size: 201.41461pt x 128.09047pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
@@ -714,12 +714,7 @@ uded in a single page
 pdfTeX warning: /usr/local/texlive/2015/bin/x86_64-darwin/pdflatex (file ../img
 /bpf-vs-csmc.pdf): PDF inclusion: multiple pdfs with page group included in a s
 ingle page
->]
-Underfull \hbox (badness 1472) in paragraph at lines 459--460
-\OT1/cmr/m/n/10 the Har-vard Data Sci-ence Ini-tia-tive. Pierre E.
- []
-
-(./dpnssm.bbl
+>] (./dpnssm.bbl
 Underfull \hbox (badness 1028) in paragraph at lines 58--62
 \OT1/cmr/m/it/10 Amer-i-can Sta-tis-ti-cal As-so-ci-a-tion\OT1/cmr/m/n/10 , 112
 (520):1636--
@@ -741,27 +736,109 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [14]
-<../img/cue-raster-appa.pdf, id=1804, 449.70613pt x 240.24695pt>
+<../img/sim_shift8.pdf, id=1639, 614.295pt x 469.755pt>
+File: ../img/sim_shift8.pdf Graphic file (type pdf)
+
+<use ../img/sim_shift8.pdf>
+Package pdftex.def Info: ../img/sim_shift8.pdf used on input line 685.
+(pdftex.def)             Requested size: 159.71292pt x 122.13342pt.
+
+<../img/sim_shift16.pdf, id=1640, 614.295pt x 469.755pt>
+File: ../img/sim_shift16.pdf Graphic file (type pdf)
+
+<use ../img/sim_shift16.pdf>
+Package pdftex.def Info: ../img/sim_shift16.pdf used on input line 686.
+(pdftex.def)             Requested size: 159.71292pt x 122.13342pt.
+
+<../img/sim_shift32.pdf, id=1641, 614.295pt x 469.755pt>
+File: ../img/sim_shift32.pdf Graphic file (type pdf)
+
+<use ../img/sim_shift32.pdf>
+Package pdftex.def Info: ../img/sim_shift32.pdf used on input line 687.
+(pdftex.def)             Requested size: 159.71292pt x 122.13342pt.
+
+Overfull \hbox (2.95256pt too wide) in paragraph at lines 696--708
+ [] 
+ []
+
+<../img/sim_shift-2.pdf, id=1642, 614.295pt x 469.755pt>
+File: ../img/sim_shift-2.pdf Graphic file (type pdf)
+
+<use ../img/sim_shift-2.pdf>
+Package pdftex.def Info: ../img/sim_shift-2.pdf used on input line 713.
+(pdftex.def)             Requested size: 159.71292pt x 122.13342pt.
+
+<../img/sim_shift-4.pdf, id=1643, 614.295pt x 469.755pt>
+File: ../img/sim_shift-4.pdf Graphic file (type pdf)
+
+<use ../img/sim_shift-4.pdf>
+Package pdftex.def Info: ../img/sim_shift-4.pdf used on input line 714.
+(pdftex.def)             Requested size: 159.71292pt x 122.13342pt.
+
+<../img/sim_shift-8.pdf, id=1644, 614.295pt x 469.755pt>
+File: ../img/sim_shift-8.pdf Graphic file (type pdf)
+
+<use ../img/sim_shift-8.pdf>
+Package pdftex.def Info: ../img/sim_shift-8.pdf used on input line 715.
+(pdftex.def)             Requested size: 159.71292pt x 122.13342pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Overfull \hbox (2.95256pt too wide) in paragraph at lines 724--736
+ [] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<../img/cue-raster-appa.pdf, id=1645, 451.66446pt x 242.02475pt>
 File: ../img/cue-raster-appa.pdf Graphic file (type pdf)
 
 <use ../img/cue-raster-appa.pdf>
-Package pdftex.def Info: ../img/cue-raster-appa.pdf used on input line 686.
-(pdftex.def)             Requested size: 224.85251pt x 120.12317pt.
+Package pdftex.def Info: ../img/cue-raster-appa.pdf used on input line 742.
+(pdftex.def)             Requested size: 225.83168pt x 121.01207pt.
 
-<../img/cue-raster-appb.pdf, id=1805, 449.70613pt x 240.24695pt>
+<../img/cue-raster-appb.pdf, id=1646, 451.66446pt x 242.02475pt>
 File: ../img/cue-raster-appb.pdf Graphic file (type pdf)
 
 <use ../img/cue-raster-appb.pdf>
-Package pdftex.def Info: ../img/cue-raster-appb.pdf used on input line 687.
-(pdftex.def)             Requested size: 224.85251pt x 120.12317pt.
+Package pdftex.def Info: ../img/cue-raster-appb.pdf used on input line 743.
+(pdftex.def)             Requested size: 225.83168pt x 121.01207pt.
 
-<../img/cue-raster-appc.pdf, id=1806, 449.70613pt x 240.24695pt>
+<../img/cue-raster-appc.pdf, id=1647, 451.66446pt x 242.02475pt>
 File: ../img/cue-raster-appc.pdf Graphic file (type pdf)
 
 <use ../img/cue-raster-appc.pdf>
-Package pdftex.def Info: ../img/cue-raster-appc.pdf used on input line 688.
-(pdftex.def)             Requested size: 224.85251pt x 120.12317pt.
- [15 <../img/cue-raster-appa.pdf> <../img/cue-raster-appb.pdf
+Package pdftex.def Info: ../img/cue-raster-appc.pdf used on input line 744.
+(pdftex.def)             Requested size: 225.83168pt x 121.01207pt.
+ [15 <../img/sim_shift8.pdf> <../img/sim_shift16.pdf
+
+pdfTeX warning: /usr/local/texlive/2015/bin/x86_64-darwin/pdflatex (file ../img
+/sim_shift16.pdf): PDF inclusion: multiple pdfs with page group included in a s
+ingle page
+> <../img/sim_shift32.pdf
+
+pdfTeX warning: /usr/local/texlive/2015/bin/x86_64-darwin/pdflatex (file ../img
+/sim_shift32.pdf): PDF inclusion: multiple pdfs with page group included in a s
+ingle page
+>] [16 <../img/sim_shift-2.pdf> <../img/sim_shift-4.pdf
+
+pdfTeX warning: /usr/local/texlive/2015/bin/x86_64-darwin/pdflatex (file ../img
+/sim_shift-4.pdf): PDF inclusion: multiple pdfs with page group included in a s
+ingle page
+> <../img/sim_shift-8.pdf
+
+pdfTeX warning: /usr/local/texlive/2015/bin/x86_64-darwin/pdflatex (file ../img
+/sim_shift-8.pdf): PDF inclusion: multiple pdfs with page group included in a s
+ingle page
+> <../img/cue-raster-appa.pdf
+
+pdfTeX warning: /usr/local/texlive/2015/bin/x86_64-darwin/pdflatex (file ../img
+/cue-raster-appa.pdf): PDF inclusion: multiple pdfs with page group included in
+ a single page
+> <../img/cue-raster-appb.pdf
 
 pdfTeX warning: /usr/local/texlive/2015/bin/x86_64-darwin/pdflatex (file ../img
 /cue-raster-appb.pdf): PDF inclusion: multiple pdfs with page group included in
@@ -771,16 +848,16 @@ pdfTeX warning: /usr/local/texlive/2015/bin/x86_64-darwin/pdflatex (file ../img
 pdfTeX warning: /usr/local/texlive/2015/bin/x86_64-darwin/pdflatex (file ../img
 /cue-raster-appc.pdf): PDF inclusion: multiple pdfs with page group included in
  a single page
->] (./dpnssm.aux)
+>] [17] (./dpnssm.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 13775 strings out of 493089
- 264028 string characters out of 6134842
- 327187 words of memory out of 5000000
- 16961 multiletter control sequences out of 15000+600000
+ 13811 strings out of 493089
+ 264837 string characters out of 6134842
+ 327234 words of memory out of 5000000
+ 16991 multiletter control sequences out of 15000+600000
  14003 words of font info for 53 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  55i,15n,54p,1111b,314s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -811,10 +888,10 @@ xmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2015/tex
 mf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/local/texlive/2015/texmf
 -dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2015/t
 exmf-dist/fonts/type1/public/amsfonts/symbols/msbm7.pfb>
-Output written on dpnssm.pdf (15 pages, 1475677 bytes).
+Output written on dpnssm.pdf (17 pages, 1478716 bytes).
 PDF statistics:
- 2371 PDF objects out of 2487 (max. 8388607)
- 212 compressed objects within 3 object streams
+ 2273 PDF objects out of 2487 (max. 8388607)
+ 265 compressed objects within 3 object streams
  0 named destinations out of 1000 (max. 500000)
- 73 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 103 words of extra memory for PDF output out of 10000 (max. 10000000)
 
