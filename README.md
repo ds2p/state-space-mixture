@@ -16,8 +16,7 @@ We can think of a firing sequence from a single neuron as a time series.  Specif
 ## Methods 
 We adopt a model-based approach to clustering time series that combines the *mixture model*, a popular generative model for clustered data, with the *state-space model*, a popular generative model for time series data.  The resultant model is named the **Dirichlet Process nonlinear State-Space Model** (DPnSSM).  The Dirichlet process aspect of the model refers to the fact that it assumes the number of clusters is a random variable that must be learned from the data.  The complete graphical model of the DPnSSM is given below.  The mathematical details can be found in the paper.
 
-<!-- ![graphical model | 20x50](AISTATS/img/graph.png)-->
-<img src="AISTATS/img/graph.png" width="48">
+<img src="AISTATS/img/graph.png" width="500">
 
 To recover a clustering of a set of observed time series, we must conduct posterior inference on this model to find distributions for the cluster assignments and the cluster parameters.  We adopt a Markov chain Monte Carlo approach that combines Gibbs sampling with recent advances in Monte Carlo, such as controlled sequential Monte Carlo and particle marginal Metropolis-Hastings.
 
@@ -32,7 +31,7 @@ We evaluate our algorithm on both simulated neuroscience data and real neuroscie
 
 Thus, there are a total of 25 simulated neurons.  Each neuron has an observed firing sequence based on its type.  Here is a heatmap of the mean co-occurrence matrix produced by the algorithm.  Each cell represents the posterior probability of two neurons belonging to the same cluster.  From this visualization, there are five clear clusters recovered by the algorithm.  These clusters correspond exactly to the ground-truth neuron types that were simulated.  Thus, we show that the algorithm performs as expected for this toy example.
 
-<img src="AISTATS/img/sim.png" width="48">
+<img src="AISTATS/img/sim.pdf" width="500">
 
 We also qualitatively evaluate the algorithm on real data.  The paper has additional details.
 
