@@ -31,7 +31,7 @@ We evaluate our algorithm on both simulated neuroscience data and real neuroscie
 
 Thus, there are a total of 25 simulated neurons.  Each neuron has an observed firing sequence based on its type.  Here is a heatmap of the mean co-occurrence matrix produced by the algorithm.  Each cell represents the posterior probability of two neurons belonging to the same cluster.  From this visualization, there are five clear clusters recovered by the algorithm.  These clusters correspond exactly to the ground-truth neuron types that were simulated.  Thus, we show that the algorithm performs as expected for this toy example.
 
-<img src="AISTATS/img/sim.pdf" width="500">
+<img src="AISTATS/img/sim.png" width="500">
 
 We also qualitatively evaluate the algorithm on real data.  The paper has additional details.
 
